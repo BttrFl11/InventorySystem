@@ -14,6 +14,21 @@ public class InventoryItem : Draggable
         protected set => _slot = value;
     }
 
+    public float Weight
+    {
+        get => _item.Weight;
+    }
+
+    public float StackSize
+    {
+        get => _item.StackSize;
+    }
+
+    public string Name
+    {
+        get => _item.name;
+    }
+
     protected override void OnEnable()
     {
         Initialize();

@@ -4,5 +4,6 @@ using UnityEngine;
 public class ItemSO : ScriptableObject
 {
     public Sprite Icon;
-
+    public float Weight;
+    public int StackSize;
 }

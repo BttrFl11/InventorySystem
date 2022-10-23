@@ -6,17 +6,19 @@ public class InventorySlot : MonoBehaviour, IDropHandler
     [SerializeField] protected RectTransform _itemParent;
 
     protected InventoryItem _item;
+    protected InventoryManager _inventoryManager;
 
     protected virtual void Awake()
     {
         _item = GetComponentInChildren<InventoryItem>();
+        _inventoryManager = GetComponentInParent<InventoryManager>();
     }
 
     public virtual void OnDrop(PointerEventData eventData)
     {
-        if(eventData.pointerDrag.TryGetComponent(out InventoryItem newItem))
+        if (eventData.pointerDrag.TryGetComponent(out InventoryItem newItem))
         {
-            if(_item != null)
+            if (_item != null)
             {
                 SwitchItems(_item, newItem);
             }
@@ -46,4 +48,6 @@ public class InventorySlot : MonoBehaviour, IDropHandler
     {
         _item = newItem;
     }
+
+    public InventoryItem Peek() => _item;
 }

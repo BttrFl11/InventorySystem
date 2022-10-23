@@ -19,6 +19,7 @@ public class DollSlot : InventorySlot
             }
 
             _item = newItem;
+            _inventoryManager.RemoveItem(this, _item);
         }
     }
 }
