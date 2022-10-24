@@ -7,19 +7,31 @@ public class DollSlot : InventorySlot
 
     public override void OnDrop(PointerEventData eventData)
     {
-        if (eventData.pointerDrag.TryGetComponent(out EquipableItem newItem) && newItem.SlotType == _slotType)
+        if (eventData.pointerDrag.TryGetComponent(out EquipableItem newItem) 
+            && newItem.SlotType == _slotType)
         {
-            if (_item != null)
+            if (newItem != _item)
             {
-                SwitchItems(_item, newItem);
-            }
-            else
-            {
-                newItem.ChangeParent(_itemParent, this);
+                if (_item != null)
+                {
+                    if(_item.TryGetComponent(out EquipableItem eItem) && eItem.SlotType == _slotType)
+                    {
+                        SwitchItems(_item, newItem);
+                    }
+                    else
+                    {
+                        _inventoryManager.AddItemToBag(this, _item);
+                    }
+                }
+                else
+                {
+                    newItem.ChangeParent(_itemParent, this);
+                }
             }
 
             _item = newItem;
-            _inventoryManager.RemoveItem(this, _item);
+            _inventoryManager.RemoveItemFromBag(this, newItem);
+            _inventoryManager.AddItemToDoll(this, newItem);
         }
     }
 }

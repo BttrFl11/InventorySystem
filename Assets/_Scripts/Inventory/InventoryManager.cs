@@ -1,9 +1,6 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using Unity.VisualScripting;
-using static SlotTypes;
 using System.Linq;
 
 public class InventoryManager : MonoBehaviour
@@ -54,30 +51,32 @@ public class InventoryManager : MonoBehaviour
         _weightText.text = $"{freeWeight} / {maxWeight} kg";
     }
 
-    public void AddItem(InventoryItem itemToAdd)
+    public void AddItemToBag(InventorySlot slot, InventoryItem itemToAdd)
     {
-        _bagInventory.Add(GetInventorySlot(), itemToAdd);
+        _bagInventory.Add(slot, itemToAdd);
     }
 
-    public void RemoveItem(InventorySlot slot, InventoryItem itemToRemove)
+    public void RemoveItemFromBag(InventorySlot slot, InventoryItem itemToRemove)
     {
         _bagInventory.Remove(slot, itemToRemove);
     }
 
-    private InventorySlot GetInventorySlot()
+    public void AddItemToDoll(InventorySlot slot, InventoryItem itemToAdd)
     {
-        var items = _bagInventory.Items;
-        for (int i = 0; i < items.Keys.Count; i++)
-        {
-            return items.FirstOrDefault(x => x.Value == null).Key;
-        }
-
-        return null;
+        _dollInventory.Add(slot, itemToAdd);
     }
 
-    [ContextMenu("Print/BagInventory")]
-    private void PrintBagInventory()
+    public void RemoveItemFromDoll(InventorySlot slot, InventoryItem itemToRemove)
     {
+        _dollInventory.Remove(slot, itemToRemove);
+    }
+
+    #region Debug
+
+    [ContextMenu("Print/BagInventory")]
+    public void PrintBagInventory()
+    {
+        Debug.Log("========BAG INVENTORY========");
         for (int i = 0; i < _bagSlots.Length; i++)
         {
             if (_bagInventory.Items.TryGetValue(_bagSlots[i], out InventoryItem item))
@@ -85,11 +84,13 @@ public class InventoryManager : MonoBehaviour
                 Debug.Log($"{i}: {item.Name}");
             }
         }
+        Debug.Log("============END DEBUG=========");
     }
 
     [ContextMenu("Print/DollInventory")]
-    private void PrintDollInventory()
+    public void PrintDollInventory()
     {
+        Debug.Log("========DOLL INVENTORY========");
         for (int i = 0; i < _dollSlots.Length; i++)
         {
             if (_dollInventory.Items.TryGetValue(_dollSlots[i], out InventoryItem item))
@@ -97,5 +98,26 @@ public class InventoryManager : MonoBehaviour
                 Debug.Log($"{i}: {item.Name}");
             }
         }
+        Debug.Log("============END DEBUG=========");
     }
+
+    [ContextMenu("Print/BagInventoryFull")]
+    public void PrintBagInventoryFull()
+    {
+        Debug.Log("========BAG INVENTORY========");
+
+        //int i = 0;
+        //foreach (var key in _bagInventory.Items.Keys)
+        //{
+        //    _bagInventory.Items.TryGetValue(key, out var value);
+        //    Debug.Log($"{i}-key: {key}\nvalue: {value}");
+        //    i++;
+        //}
+
+        Debug.Log(_bagInventory.Items.ToString());
+
+        Debug.Log("============END DEBUG=========");
+    }
+
+    #endregion
 }

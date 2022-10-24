@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+[Serializable]
 public class Inventory
 {
     private float _maxWeight;
@@ -46,7 +47,10 @@ public class Inventory
     public Dictionary<InventorySlot, InventoryItem> Items
     {
         get => _items;
-        protected set => _items = value;
+        protected set
+        {
+            _items = value;
+        }
     }
 
     public Inventory(float weight)
@@ -54,16 +58,16 @@ public class Inventory
         MaxWeight = weight;
     }
 
-    public void Add(InventorySlot slot, InventoryItem item)
+    public void Add(InventorySlot slot, InventoryItem itemToAdd)
     {
-        if (item.Weight <= FreeWeight)
+        if (itemToAdd == null) return;
+
+        if (itemToAdd.Weight <= FreeWeight)
         {
-            Weight += item.Weight;
+            ChangeSlotItem(slot, itemToAdd);
 
-            Items.Remove(slot);
-            Items.Add(slot, item);
-
-            OnItemAdded?.Invoke(item);
+            OnItemAdded?.Invoke(itemToAdd);
+            Weight += itemToAdd.Weight;
         }
         else
         {
@@ -73,8 +77,13 @@ public class Inventory
 
     public void Remove(InventorySlot slot, InventoryItem itemToRemove)
     {
-        Weight -= itemToRemove.Weight;
+        ChangeSlotItem(slot, null);
 
-        Items.Remove(slot);
+        Weight -= itemToRemove.Weight;
+    }
+
+    public void ChangeSlotItem(InventorySlot slot, InventoryItem newItem)
+    {
+        Items[slot] = newItem;
     }
 }
