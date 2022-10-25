@@ -44,6 +44,10 @@ public class Inventory
         get => MaxWeight - Weight;
     }
 
+    /// <summary>
+    /// <param name="agr1" Index of the slot </param>
+    /// <param name="arg2" Item </param>
+    /// </summary>
     public Dictionary<InventorySlot, InventoryItem> Items
     {
         get => _items;

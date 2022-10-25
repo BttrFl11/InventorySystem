@@ -30,8 +30,9 @@ public class DollSlot : InventorySlot
             }
 
             _item = newItem;
-            _inventoryManager.RemoveItemFromBag(this, newItem);
+            _inventoryManager.RemoveItemFromBag(newItem.Slot, newItem);
             _inventoryManager.AddItemToDoll(this, newItem);
+            newItem.Equip();
         }
     }
 }

@@ -46,6 +46,12 @@ public class InventoryManager : MonoBehaviour
         _bagInventory.OnWeightChanged -= OnWeightChanged;
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.T))
+            PrintBagInventoryFull();
+    }
+
     private void OnWeightChanged(float freeWeight, float maxWeight)
     {
         _weightText.text = $"{freeWeight} / {maxWeight} kg";
@@ -73,48 +79,21 @@ public class InventoryManager : MonoBehaviour
 
     #region Debug
 
-    [ContextMenu("Print/BagInventory")]
-    public void PrintBagInventory()
-    {
-        Debug.Log("========BAG INVENTORY========");
-        for (int i = 0; i < _bagSlots.Length; i++)
-        {
-            if (_bagInventory.Items.TryGetValue(_bagSlots[i], out InventoryItem item))
-            {
-                Debug.Log($"{i}: {item.Name}");
-            }
-        }
-        Debug.Log("============END DEBUG=========");
-    }
-
-    [ContextMenu("Print/DollInventory")]
-    public void PrintDollInventory()
-    {
-        Debug.Log("========DOLL INVENTORY========");
-        for (int i = 0; i < _dollSlots.Length; i++)
-        {
-            if (_dollInventory.Items.TryGetValue(_dollSlots[i], out InventoryItem item))
-            {
-                Debug.Log($"{i}: {item.Name}");
-            }
-        }
-        Debug.Log("============END DEBUG=========");
-    }
-
     [ContextMenu("Print/BagInventoryFull")]
     public void PrintBagInventoryFull()
     {
         Debug.Log("========BAG INVENTORY========");
 
-        //int i = 0;
-        //foreach (var key in _bagInventory.Items.Keys)
-        //{
-        //    _bagInventory.Items.TryGetValue(key, out var value);
-        //    Debug.Log($"{i}-key: {key}\nvalue: {value}");
-        //    i++;
-        //}
+        int i = 0;
+        foreach (var slot in _bagSlots)
+        {
+            if (slot.Peek() != null)
+                Debug.Log($"{i}-Item: '{slot.Peek()}' ");
+            else
+                Debug.Log($"{i}-Item is null");
 
-        Debug.Log(_bagInventory.Items.ToString());
+            i++;
+        }
 
         Debug.Log("============END DEBUG=========");
     }
