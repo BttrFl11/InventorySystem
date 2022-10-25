@@ -8,6 +8,11 @@ public class InventorySlot : MonoBehaviour, IDropHandler
     protected InventoryItem _item;
     protected InventoryManager _inventoryManager;
 
+    public RectTransform ItemParent
+    {
+        get => _itemParent;
+    }
+
     protected virtual void Awake()
     {
         _item = GetComponentInChildren<InventoryItem>();

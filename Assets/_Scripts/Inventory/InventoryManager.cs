@@ -77,6 +77,17 @@ public class InventoryManager : MonoBehaviour
         _dollInventory.Remove(slot, itemToRemove);
     }
 
+    public InventorySlot GetFirstEmptySlot()
+    {
+        foreach (var slot in _bagSlots)
+        {
+            if (slot.Peek() == null)
+                return slot;
+        }
+
+        return null;
+    }
+
     #region Debug
 
     [ContextMenu("Print/BagInventoryFull")]

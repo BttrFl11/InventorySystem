@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class InventoryItem : Draggable
 {
-    [SerializeField] private ItemSO _item;
-    [SerializeField] private Image _itemIcon;
+    [SerializeField] protected ItemSO _item;
+    [SerializeField] protected Image _itemIcon;
 
-    private InventorySlot _slot;
+    protected InventorySlot _slot;
 
     public InventorySlot Slot
     {
@@ -36,7 +36,7 @@ public class InventoryItem : Draggable
         base.OnEnable();
     }
 
-    private void Initialize()
+    protected virtual void Initialize()
     {
         Slot = GetComponentInParent<InventorySlot>();
 

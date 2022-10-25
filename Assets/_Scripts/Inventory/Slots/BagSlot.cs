@@ -8,12 +8,17 @@ public class BagSlot : InventorySlot
         {
             if (_item != null)
             {
-                if (newItem.TryGetComponent(out EquipableItem _) && newItem.Slot.TryGetComponent(out DollSlot _))
+                if (newItem.TryGetComponent(out EquipableItem eItem) && newItem.Slot.TryGetComponent(out DollSlot _))
                 {
+                    var slot = _inventoryManager.GetFirstEmptySlot();
+                    _item.ChangeParent(slot.ItemParent, slot);
+
+                    newItem.ChangeParent(_itemParent, this);
+
                     _inventoryManager.RemoveItemFromDoll(newItem.Slot, newItem);
                     _inventoryManager.AddItemToBag(this, newItem);
 
-                    newItem.ChangeParent(_itemParent, this);
+                    eItem.Unequip();
                 }
                 else
                 {

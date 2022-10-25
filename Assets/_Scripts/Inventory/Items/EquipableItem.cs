@@ -2,8 +2,6 @@ using UnityEngine;
 
 public class EquipableItem : InventoryItem
 {
-    [SerializeField] private SlotTypes.Types _slotType;
-
     private bool _isEquiped = false;
 
     public bool IsEquiped
@@ -14,7 +12,7 @@ public class EquipableItem : InventoryItem
 
     public SlotTypes.Types SlotType
     {
-        get => _slotType;
+        get => _item.SlotType;
     }
 
     public void Equip()
