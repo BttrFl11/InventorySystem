@@ -14,6 +14,17 @@ public class InventoryItem : Draggable
         protected set => _slot = value;
     }
 
+    public ItemSO Item
+    {
+        get => _item;
+        set
+        {
+            _item = value;
+
+            Initialize();
+        }
+    }
+
     public float Weight
     {
         get => _item.Weight;
@@ -31,15 +42,15 @@ public class InventoryItem : Draggable
 
     protected override void OnEnable()
     {
+        Slot = GetComponentInParent<InventorySlot>();
+
         Initialize();
 
         base.OnEnable();
     }
 
-    protected virtual void Initialize()
+    public virtual void Initialize()
     {
-        Slot = GetComponentInParent<InventorySlot>();
-
         _itemIcon.sprite = _item.Icon;
     }
 

@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: Cube
   m_EditorClassIdentifier: 
   Icon: {fileID: 21300000, guid: cba7f62669fe8e94fab923ca4edf0761, type: 3}
-  Weight: 2
+  SlotType: 0
+  Weight: 1
   StackSize: 1

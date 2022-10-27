@@ -140,7 +140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectAlfa: 0.6
-  _item: {fileID: 11400000, guid: d8750cf5cffffe4439a95da811047ad1, type: 2}
+  _item: {fileID: 0}
   _itemIcon: {fileID: 1978118608956985017}
 --- !u!1 &3377046780850608285
 GameObject:

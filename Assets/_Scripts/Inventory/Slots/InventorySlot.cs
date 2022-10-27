@@ -52,6 +52,8 @@ public class InventorySlot : MonoBehaviour, IDropHandler
     public virtual void AttachItem(InventoryItem newItem)
     {
         _item = newItem;
+
+        _item.transform.SetParent(ItemParent);
     }
 
     public InventoryItem Peek() => _item;

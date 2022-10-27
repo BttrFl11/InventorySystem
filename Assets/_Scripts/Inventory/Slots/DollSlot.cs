@@ -17,11 +17,15 @@ public class DollSlot : InventorySlot
                     if(_item.TryGetComponent(out EquipableItem eItem) && eItem.SlotType == _slotType)
                     {
                         SwitchItems(_item, newItem);
+
                     }
                     else
                     {
                         _inventoryManager.AddItemToBag(this, _item);
                     }
+
+                    _inventoryManager.RemoveItemFromBag(newItem.Slot, newItem);
+                    _inventoryManager.AddItemToDoll(this, newItem);
                 }
                 else
                 {
@@ -30,8 +34,6 @@ public class DollSlot : InventorySlot
             }
 
             _item = newItem;
-            _inventoryManager.RemoveItemFromBag(newItem.Slot, newItem);
-            _inventoryManager.AddItemToDoll(this, newItem);
             newItem.Equip();
         }
     }

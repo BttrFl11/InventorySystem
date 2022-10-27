@@ -7,8 +7,10 @@ public class InventoryManager : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _weightText;
 
-    [SerializeField] private Transform bagParent;
-    [SerializeField] private Transform dollParent;
+    [SerializeField] private GameObject _inventoryItemPrefab;
+    [SerializeField] private GameObject _inventoryEquipableItemPrefab;
+    [SerializeField] private Transform _bagParent;
+    [SerializeField] private Transform _dollParent;
 
     [SerializeField] private float _maxWeight;
 
@@ -25,8 +27,8 @@ public class InventoryManager : MonoBehaviour
 
         _bagInventory.OnWeightChanged += OnWeightChanged;
 
-        _bagSlots = bagParent.GetComponentsInChildren<BagSlot>();
-        _dollSlots = dollParent.GetComponentsInChildren<DollSlot>();
+        _bagSlots = _bagParent.GetComponentsInChildren<BagSlot>();
+        _dollSlots = _dollParent.GetComponentsInChildren<DollSlot>();
 
         for (int i = 0; i < _bagSlots.Length; i++)
         {
@@ -75,6 +77,24 @@ public class InventoryManager : MonoBehaviour
     public void RemoveItemFromDoll(InventorySlot slot, InventoryItem itemToRemove)
     {
         _dollInventory.Remove(slot, itemToRemove);
+    }
+
+    /// <summary>
+    /// Creates a new Item and adds it to the bag
+    /// </summary>
+    public void CreateItem(ItemSO newItemSO)
+    {
+        var slot = GetFirstEmptySlot();
+        var prefab = newItemSO.SlotType == SlotTypes.Types.None ? _inventoryItemPrefab : _inventoryEquipableItemPrefab;
+        var itemGO = Instantiate(prefab, transform);
+        var item = itemGO.GetComponent<InventoryItem>();
+
+        item.Item = newItemSO;
+        item.ChangeParent(slot.ItemParent, slot);
+
+        AddItemToBag(slot, item);
+
+        Debug.Log($"Item {item.Name} was created!");
     }
 
     public InventorySlot GetFirstEmptySlot()
