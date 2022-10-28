@@ -8,14 +8,14 @@ public class Inventory
     private float _maxWeight;
     private float _weight;
 
-    private Dictionary<InventorySlot, InventoryItem> _items = new();
+    private Dictionary<InventorySlot, ItemSO> _items = new();
 
     /// <summary>
     /// <param name="arg1"> Weight </param>
     /// <param name="arg2"> MaxWeight </param>
     /// </summary>
     public Action<float, float> OnWeightChanged;
-    public Action<InventoryItem> OnItemAdded;
+    public Action<ItemSO> OnItemAdded;
 
     public float MaxWeight
     {
@@ -48,7 +48,7 @@ public class Inventory
     /// <param name="agr1" Index of the slot </param>
     /// <param name="arg2" Item </param>
     /// </summary>
-    public Dictionary<InventorySlot, InventoryItem> Items
+    public Dictionary<InventorySlot, ItemSO> Items
     {
         get => _items;
         protected set
@@ -57,12 +57,39 @@ public class Inventory
         }
     }
 
-    public Inventory(float weight)
+    public Inventory(float weight, InventorySlot[] slots, ItemSO[] startItems)
     {
         MaxWeight = weight;
+
+        for (int i = 0; i < slots.Length; i++)
+        {
+            if (startItems != null)
+            {
+                if (i < startItems.Length - 1)
+                {
+                    Debug.Log($"start item {i}: {startItems[i].name}");
+                    if (startItems[i].Weight <= FreeWeight)
+                    {
+                        ChangeSlotItem(slots[i], startItems[i]);
+
+                        OnItemAdded?.Invoke(startItems[i]);
+                        Weight += startItems[i].Weight;
+                    }
+                }
+                else
+                {
+                    ChangeSlotItem(slots[i], null);
+                }
+
+            }
+            else
+            {
+                Debug.LogWarning("start items is null");
+            }
+        }
     }
 
-    public void Add(InventorySlot slot, InventoryItem itemToAdd)
+    public void Add(InventorySlot slot, ItemSO itemToAdd)
     {
         if (itemToAdd == null) return;
 
@@ -79,14 +106,14 @@ public class Inventory
         }
     }
 
-    public void Remove(InventorySlot slot, InventoryItem itemToRemove)
+    public void Remove(InventorySlot slot, ItemSO itemToRemove)
     {
         ChangeSlotItem(slot, null);
 
         Weight -= itemToRemove.Weight;
     }
 
-    public void ChangeSlotItem(InventorySlot slot, InventoryItem newItem)
+    public void ChangeSlotItem(InventorySlot slot, ItemSO newItem)
     {
         Items[slot] = newItem;
     }

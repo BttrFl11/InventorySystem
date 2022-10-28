@@ -44,6 +44,15 @@ public class InventorySlot : MonoBehaviour, IDropHandler
         item1.Slot.AttachItem(item1);
     }
 
+    public void Clear()
+    {
+        if(_item != null)
+        {
+            Destroy(_item.gameObject);
+            _item = null;
+        }
+    }
+
     public virtual void DetachItem()
     {
         _item = null;

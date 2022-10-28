@@ -1,18 +1,16 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System.Linq;
 
 public class InventoryManager : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _weightText;
 
+    [SerializeField] private GameObject _panel;
     [SerializeField] private GameObject _inventoryItemPrefab;
     [SerializeField] private GameObject _inventoryEquipableItemPrefab;
     [SerializeField] private Transform _bagParent;
     [SerializeField] private Transform _dollParent;
-
-    [SerializeField] private float _maxWeight;
 
     private Inventory _bagInventory;
     private Inventory _dollInventory;
@@ -20,79 +18,135 @@ public class InventoryManager : MonoBehaviour
     private BagSlot[] _bagSlots;
     private DollSlot[] _dollSlots;
 
-    private void OnEnable()
+    public BagSlot[] BagSlots
     {
-        _bagInventory = new(_maxWeight);
-        _dollInventory = new(Mathf.Infinity);
+        get => _bagSlots;
+    }
 
-        _bagInventory.OnWeightChanged += OnWeightChanged;
+    public DollSlot[] DollSlots
+    {
+        get => _dollSlots;
+    }
 
-        _bagSlots = _bagParent.GetComponentsInChildren<BagSlot>();
-        _dollSlots = _dollParent.GetComponentsInChildren<DollSlot>();
+    public Inventory Bag
+    {
+        get => _bagInventory;
+    }
 
-        for (int i = 0; i < _bagSlots.Length; i++)
+    public Inventory Doll
+    {
+        get => _dollInventory;
+    }
+
+    public static InventoryManager Instance;
+
+    private void Awake()
+    {
+        #region Singleton
+        if (Instance == null)
         {
-            var item = _bagSlots[i].Peek();
-            _bagInventory.Add(_bagSlots[i], item);
+            Instance = this;
         }
-
-        for (int j = 0; j < _dollSlots.Length; j++)
+        else
         {
-            var item = _dollSlots[j].Peek();
-            _dollInventory.Add(_dollSlots[j], item);
+            Debug.LogError("Scene has 2 and more InventoryManagers!");
+            Destroy(gameObject);
         }
+        #endregion
+
+        _bagSlots = GetComponentsInChildren<BagSlot>();
+        _dollSlots = GetComponentsInChildren<DollSlot>();
     }
 
     private void OnDisable()
     {
-        _bagInventory.OnWeightChanged -= OnWeightChanged;
+        _bagInventory.OnWeightChanged -= UpdateUI;
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.T))
-            PrintBagInventoryFull();
-    }
-
-    private void OnWeightChanged(float freeWeight, float maxWeight)
+    private void UpdateUI(float freeWeight, float maxWeight)
     {
         _weightText.text = $"{freeWeight} / {maxWeight} kg";
     }
 
-    public void AddItemToBag(InventorySlot slot, InventoryItem itemToAdd)
+    public void Initialize(Inventory bag, Inventory doll)
+    {
+        _bagInventory = bag;
+        _dollInventory = doll;
+
+        _bagInventory.OnWeightChanged += UpdateUI;
+
+        InitializeSlots(_bagSlots, _bagInventory);
+        InitializeSlots(_dollSlots, _dollInventory);
+
+        UpdateUI(_bagInventory.Weight, _bagInventory.MaxWeight);
+    }
+
+    private void InitializeSlots(InventorySlot[] slots, Inventory inventory)
+    {
+        for (int i = 0; i < slots.Length; i++)
+        {
+            slots[i].Clear();
+
+            var item = inventory.Items[slots[i]];
+            Debug.Log(item.name);
+
+            if (item != null)
+                CreateItem(item);
+        }
+    }
+
+    public void AddItemToBag(InventorySlot slot, ItemSO itemToAdd)
     {
         _bagInventory.Add(slot, itemToAdd);
     }
 
-    public void RemoveItemFromBag(InventorySlot slot, InventoryItem itemToRemove)
+    public void RemoveItemFromBag(InventorySlot slot, ItemSO itemToRemove)
     {
         _bagInventory.Remove(slot, itemToRemove);
     }
 
-    public void AddItemToDoll(InventorySlot slot, InventoryItem itemToAdd)
+    public void AddItemToDoll(InventorySlot slot, ItemSO itemToAdd)
     {
         _dollInventory.Add(slot, itemToAdd);
     }
 
-    public void RemoveItemFromDoll(InventorySlot slot, InventoryItem itemToRemove)
+    public void RemoveItemFromDoll(InventorySlot slot, ItemSO itemToRemove)
     {
         _dollInventory.Remove(slot, itemToRemove);
     }
 
+    public void SetPanelActive(bool active) => _panel.SetActive(active);
+
     /// <summary>
     /// Creates a new Item and adds it to the bag
     /// </summary>
-    public void CreateItem(ItemSO newItemSO)
+    public void CreateItem(ItemSO newItemSO, bool addToBag = true)
     {
-        var slot = GetFirstEmptySlot();
+        InventorySlot slot = GetFirstEmptySlot();
+        if (addToBag == false)
+        {
+            //foreach (var key in _dollInventory.Items.Keys)
+            //{
+            //    if (key.TryGetComponent(out DollSlot dollSlot))
+            //    {
+            //        if (dollSlot.SlotType == newItemSO.SlotType && dollSlot.Peek() == null)
+            //            slot = dollSlot;
+            //    }
+            //}
+        }
+
         var prefab = newItemSO.SlotType == SlotTypes.Types.None ? _inventoryItemPrefab : _inventoryEquipableItemPrefab;
-        var itemGO = Instantiate(prefab, transform);
-        var item = itemGO.GetComponent<InventoryItem>();
+        GameObject itemGO = Instantiate(prefab, _panel.transform);
+        InventoryItem item = itemGO.GetComponent<InventoryItem>();
 
         item.Item = newItemSO;
         item.ChangeParent(slot.ItemParent, slot);
+        item.Initialize();
 
-        AddItemToBag(slot, item);
+        if (addToBag == true)
+            AddItemToBag(slot, newItemSO);
+        else
+            AddItemToDoll(slot, newItemSO);
 
         Debug.Log($"Item {item.Name} was created!");
     }

@@ -5,6 +5,11 @@ public class DollSlot : InventorySlot
 {
     [SerializeField] private SlotTypes.Types _slotType;
 
+    public SlotTypes.Types SlotType
+    {
+        get => _slotType;
+    }
+
     public override void OnDrop(PointerEventData eventData)
     {
         if (eventData.pointerDrag.TryGetComponent(out EquipableItem newItem) 
@@ -21,11 +26,11 @@ public class DollSlot : InventorySlot
                     }
                     else
                     {
-                        _inventoryManager.AddItemToBag(this, _item);
+                        _inventoryManager.AddItemToBag(this, _item.Item);
                     }
 
-                    _inventoryManager.RemoveItemFromBag(newItem.Slot, newItem);
-                    _inventoryManager.AddItemToDoll(this, newItem);
+                    _inventoryManager.RemoveItemFromBag(newItem.Slot, newItem.Item);
+                    _inventoryManager.AddItemToDoll(this, newItem.Item);
                 }
                 else
                 {
