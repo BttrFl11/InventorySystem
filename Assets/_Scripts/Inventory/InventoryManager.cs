@@ -54,8 +54,8 @@ public class InventoryManager : MonoBehaviour
         }
         #endregion
 
-        _bagSlots = GetComponentsInChildren<BagSlot>();
-        _dollSlots = GetComponentsInChildren<DollSlot>();
+        _bagSlots = _bagParent.GetComponentsInChildren<BagSlot>();
+        _dollSlots = _dollParent.GetComponentsInChildren<DollSlot>();
     }
 
     private void OnDisable()
@@ -70,28 +70,99 @@ public class InventoryManager : MonoBehaviour
 
     public void Initialize(Inventory bag, Inventory doll)
     {
+        if (_bagInventory != null)
+        {
+            _bagInventory.Clear();
+            _dollInventory.Clear();
+        }
+
         _bagInventory = bag;
         _dollInventory = doll;
 
         _bagInventory.OnWeightChanged += UpdateUI;
 
-        InitializeSlots(_bagSlots, _bagInventory);
-        InitializeSlots(_dollSlots, _dollInventory);
+        //InitializeSlots(_bagSlots, _bagInventory);
+        //InitializeSlots(_dollSlots, _dollInventory);
+
+        InitializeBag();
+        InitializeDoll();
 
         UpdateUI(_bagInventory.Weight, _bagInventory.MaxWeight);
     }
 
-    private void InitializeSlots(InventorySlot[] slots, Inventory inventory)
+    //private void InitializeSlots(InventorySlot[] slots, Inventory inventory)
+    //{
+    //    for (int i = 0; i < slots.Length; i++)
+    //    {
+    //        slots[i].Clear();
+
+    //        try
+    //        {
+    //            var item = inventory.Items[slots[i]];
+    //            string itemName = item == null ? "item is null" : item.name;
+    //            Debug.Log($"slot-{i}\nitem: {itemName}");
+
+    //            if (item != null)
+    //                CreateItem(item);
+    //        }
+    //        catch
+    //        {
+    //            Debug.LogWarning("Error: inventory.Items['key'] is not found");
+    //        }
+
+    //    }
+    //}
+
+    private void InitializeDoll()
     {
-        for (int i = 0; i < slots.Length; i++)
+        for (int i = 0; i < _dollSlots.Length; i++)
         {
-            slots[i].Clear();
+            _dollSlots[i].Clear();
 
-            var item = inventory.Items[slots[i]];
-            Debug.Log(item.name);
+            try
+            {
+                var item = _dollInventory.Items[_dollSlots[i]];
+                string itemName = item == null ? "doll item is null" : item.name;
+                Debug.Log($"Doll Slot-{i}\nItem: {itemName}");
 
-            if (item != null)
-                CreateItem(item);
+                if (item != null)
+                    CreateItem(item, false);
+            }
+            catch
+            {
+                Debug.LogWarning("Error: _dollInventory.Items['key'] is not found");
+            }
+
+        }
+    }
+
+    private void InitializeBag()
+    {
+        for (int i = 0; i < _bagSlots.Length; i++)
+        {
+            _bagSlots[i].Clear();
+
+            try
+            {
+                var item = _bagInventory.Items[_bagSlots[i]];
+                string itemName = item == null ? "bag item is null" : item.name;
+                Debug.Log($"Bag Slot-{i}\nItem: {itemName}");
+
+                if (item != null)
+                {
+                    var createdItem = CreateItem(item);
+                    if (createdItem.TryGetComponent(out EquipableItem eItem))
+                    {
+                        eItem.Equip();
+                    }
+
+                }
+            }
+            catch
+            {
+                Debug.LogWarning("Error: _bagInventory.Items['key'] is not found");
+            }
+
         }
     }
 
@@ -120,19 +191,19 @@ public class InventoryManager : MonoBehaviour
     /// <summary>
     /// Creates a new Item and adds it to the bag
     /// </summary>
-    public void CreateItem(ItemSO newItemSO, bool addToBag = true)
+    public InventoryItem CreateItem(ItemSO newItemSO, bool addToBag = true)
     {
         InventorySlot slot = GetFirstEmptySlot();
         if (addToBag == false)
         {
-            //foreach (var key in _dollInventory.Items.Keys)
-            //{
-            //    if (key.TryGetComponent(out DollSlot dollSlot))
-            //    {
-            //        if (dollSlot.SlotType == newItemSO.SlotType && dollSlot.Peek() == null)
-            //            slot = dollSlot;
-            //    }
-            //}
+            foreach (var key in _dollInventory.Items.Keys)
+            {
+                if (key.TryGetComponent(out DollSlot dollSlot))
+                {
+                    if (dollSlot.SlotType == newItemSO.SlotType && dollSlot.Peek() == null)
+                        slot = dollSlot;
+                }
+            }
         }
 
         var prefab = newItemSO.SlotType == SlotTypes.Types.None ? _inventoryItemPrefab : _inventoryEquipableItemPrefab;
@@ -149,6 +220,8 @@ public class InventoryManager : MonoBehaviour
             AddItemToDoll(slot, newItemSO);
 
         Debug.Log($"Item {item.Name} was created!");
+
+        return item;
     }
 
     public InventorySlot GetFirstEmptySlot()

@@ -46,6 +46,7 @@ public class InventoryDebugger : MonoBehaviour
                 if (_inventory.Bag == _npcs[i].BagInventory)
                     return;
 
+                Debug.Log("NPC INVENTORY " + i);
                 _inventory.SetPanelActive(true);
                 _inventory.Initialize(_npcs[i].BagInventory, _npcs[i].DollInventory);
             }

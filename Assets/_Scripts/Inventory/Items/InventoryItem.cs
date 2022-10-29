@@ -51,7 +51,8 @@ public class InventoryItem : Draggable
 
     public virtual void Initialize()
     {
-        _itemIcon.sprite = _item.Icon;
+        if (_item != null)
+            _itemIcon.sprite = _item.Icon;
     }
 
     public void ChangeParent(RectTransform newParent, InventorySlot newSlot)

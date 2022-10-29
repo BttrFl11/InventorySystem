@@ -5,6 +5,7 @@ public class NPC
 {
     [SerializeField] private float _inventoryWeight;
     [SerializeField] private ItemSO[] _startItems;
+    [SerializeField] private ItemSO[] _startEquipedItems;
 
     private Inventory _bagInventory;
     private Inventory _dollInventory;
@@ -30,6 +31,6 @@ public class NPC
     public void Initialize(InventoryManager manager)
     {
         BagInventory = new(_inventoryWeight, manager.BagSlots, _startItems);
-        DollInventory = new(Mathf.Infinity, manager.DollSlots, null);
+        DollInventory = new(Mathf.Infinity, manager.DollSlots, _startEquipedItems);
     }
 }

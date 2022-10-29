@@ -113,6 +113,11 @@ public class Inventory
         Weight -= itemToRemove.Weight;
     }
 
+    public void Clear()
+    {
+        Weight = 0;
+    }
+
     public void ChangeSlotItem(InventorySlot slot, ItemSO newItem)
     {
         Items[slot] = newItem;
