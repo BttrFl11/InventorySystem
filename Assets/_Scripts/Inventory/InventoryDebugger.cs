@@ -3,55 +3,55 @@ using UnityEngine;
 public class InventoryDebugger : MonoBehaviour
 {
     [Header("Debug")]
-    [SerializeField] private InventoryManager _inventory;
-    [SerializeField] private ItemSO _item1;
-    [SerializeField] private ItemSO _item2;
-    [SerializeField] private ItemSO _item3;
-    [SerializeField] private NPC[] _npcs;
+    //[SerializeField] private ItemSO _item1;
+    //[SerializeField] private ItemSO _item2;
+    //[SerializeField] private ItemSO _item3;
+    //[SerializeField] private NPC[] _npcs;
 
     private int fKeyStart = 282;
 
-    private void Start()
-    {
-        for (int i = 0; i < _npcs.Length; i++)
-        {
-            _npcs[i].Initialize(_inventory);
-        }
-    }
+    //private void Start()
+    //{
+    //    for (int i = 0; i < _npcs.Length; i++)
+    //    {
+    //        _npcs[i].Initialize();
+    //    }
+    //}
 
     private void Update()
     {
-        TryCreateItems();
+        //TryCreateItems();
         TryPrint();
 
-        TryInitialize();
+        //TryInitialize();
         TryCloseOpen();
     }
 
     private void TryCloseOpen()
     {
+        var inventory = InventoryManager.Instance;
         if (Input.GetKeyDown(KeyCode.C))
-            _inventory.SetPanelActive(false);
+            inventory.SetPanelActive(false);
         if (Input.GetKeyDown(KeyCode.V))
-            _inventory.SetPanelActive(true);
+            inventory.SetPanelActive(true);
     }
 
-    private void TryInitialize()
-    {
-        for (int i = 0; i < _npcs.Length; i++)
-        {
-            KeyCode key = (KeyCode)fKeyStart + i;
-            if (Input.GetKeyDown(key))
-            {
-                if (_inventory.Bag == _npcs[i].BagInventory)
-                    return;
+    //private void TryInitialize()
+    //{
+    //    for (int i = 0; i < _npcs.Length; i++)
+    //    {
+    //        KeyCode key = (KeyCode)fKeyStart + i;
+    //        if (Input.GetKeyDown(key))
+    //        {
+    //            if (_inventory.Bag == _npcs[i].BagInventory)
+    //                return;
 
-                Debug.Log("NPC INVENTORY " + i);
-                _inventory.SetPanelActive(true);
-                _inventory.Initialize(_npcs[i].BagInventory, _npcs[i].DollInventory);
-            }
-        }
-    }
+    //            Debug.Log("NPC INVENTORY " + i);
+    //            _inventory.SetPanelActive(true);
+    //            _inventory.Initialize(_npcs[i].BagInventory, _npcs[i].DollInventory);
+    //        }
+    //    }
+    //}
 
     private void TryPrint()
     {
@@ -65,8 +65,9 @@ public class InventoryDebugger : MonoBehaviour
 
     private void PrintInventory()
     {
-        var doll = _inventory.Doll.Items;
-        var bag = _inventory.Bag.Items;
+        var inventory = InventoryManager.Instance;
+        var doll = inventory.Doll.Items;
+        var bag = inventory.Bag.Items;
         Debug.Log("--------------DOLL-------------");
         foreach (var key in doll.Keys)
         {
@@ -81,15 +82,15 @@ public class InventoryDebugger : MonoBehaviour
         Debug.Log("-----------------------------");
     }
 
-    private void TryCreateItems()
-    {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-            _inventory.CreateItem(_item1, _inventory.GetFirstEmptySlot());
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-            _inventory.CreateItem(_item2, _inventory.GetFirstEmptySlot());
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-            _inventory.CreateItem(_item3, _inventory.GetFirstEmptySlot());
-    }
+    //private void TryCreateItems()
+    //{
+    //    if (Input.GetKeyDown(KeyCode.Alpha1))
+    //        _inventory.CreateItem(_item1, _inventory.GetFirstEmptySlot());
+    //    if (Input.GetKeyDown(KeyCode.Alpha2))
+    //        _inventory.CreateItem(_item2, _inventory.GetFirstEmptySlot());
+    //    if (Input.GetKeyDown(KeyCode.Alpha3))
+    //        _inventory.CreateItem(_item3, _inventory.GetFirstEmptySlot());
+    //}
 
 
     [ContextMenu("Print/BagInventoryFull")]
@@ -98,7 +99,7 @@ public class InventoryDebugger : MonoBehaviour
         Debug.Log("========BAG INVENTORY========");
 
         int i = 0;
-        foreach (var slot in _inventory.BagSlots)
+        foreach (var slot in InventoryManager.Instance.BagSlots)
         {
             if (slot.Peek() != null)
                 Debug.Log($"{i}-Item: '{slot.Peek()}' ");
@@ -117,7 +118,7 @@ public class InventoryDebugger : MonoBehaviour
         Debug.Log("========BAG INVENTORY========");
 
         int i = 0;
-        foreach (var slot in _inventory.DollSlots)
+        foreach (var slot in InventoryManager.Instance.DollSlots)
         {
             if (slot.Peek() != null)
                 Debug.Log($"{i}-Item: '{slot.Peek()}' ");

@@ -28,9 +28,10 @@ public class NPC
         }
     }
 
-    public void Initialize(InventoryManager manager)
+    public void Initialize()
     {
-        BagInventory = new(_inventoryWeight, manager.BagSlots, _startItems);
-        DollInventory = new(Mathf.Infinity, manager.DollSlots, _startEquipedItems);
+        var inventory = InventoryManager.Instance;
+        BagInventory = new(_inventoryWeight, inventory.BagSlots, _startItems);
+        DollInventory = new(Mathf.Infinity, inventory.DollSlots, _startEquipedItems);
     }
 }

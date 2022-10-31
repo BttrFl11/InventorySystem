@@ -56,6 +56,8 @@ public class InventoryManager : MonoBehaviour
 
         _bagSlots = _bagParent.GetComponentsInChildren<BagSlot>();
         _dollSlots = _dollParent.GetComponentsInChildren<DollSlot>();
+
+        SetPanelActive(false);
     }
 
     private void OnDisable()
