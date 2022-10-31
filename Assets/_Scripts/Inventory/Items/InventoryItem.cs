@@ -55,7 +55,7 @@ public class InventoryItem : Draggable
             _itemIcon.sprite = _item.Icon;
     }
 
-    public void ChangeParent(RectTransform newParent, InventorySlot newSlot)
+    public void ChangeParent(InventorySlot newSlot)
     {
         if (Slot != null)
             Slot.DetachItem();
@@ -63,6 +63,6 @@ public class InventoryItem : Draggable
         Slot = newSlot;
         Slot.AttachItem(this);
 
-        ChangeParent(newParent);
+        ChangeParent(Slot.ItemParent);
     }
 }

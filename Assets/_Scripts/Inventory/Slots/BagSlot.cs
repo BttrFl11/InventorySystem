@@ -1,4 +1,5 @@
 using UnityEngine.EventSystems;
+using UnityEngine;
 
 public class BagSlot : InventorySlot
 {
@@ -8,32 +9,38 @@ public class BagSlot : InventorySlot
         {
             if (_item != null)
             {
-                if (newItem.TryGetComponent(out EquipableItem eItem) && newItem.Slot.TryGetComponent(out DollSlot _))
+                if (newItem.TryGetComponent(out EquipableItem eItem) && eItem.IsEquiped == true)
                 {
                     var slot = _inventoryManager.GetFirstEmptySlot();
-                    _item.ChangeParent(slot.ItemParent, slot);
+                    _item.ChangeParent(slot);
 
-                    newItem.ChangeParent(_itemParent, this);
-
-                    _inventoryManager.RemoveItemFromDoll(newItem.Slot, newItem.Item);
+                    _inventoryManager.RemoveItemFromDoll(newItem.Slot);
                     _inventoryManager.AddItemToBag(this, newItem.Item);
+
+                    newItem.ChangeParent(this);
 
                     eItem.Unequip();
                 }
                 else
                 {
-                    SwitchItems(_item, newItem);
+                    SwapItems(newItem);
                 }
             }
             else
             {
-                newItem.ChangeParent(_itemParent, this);
-
-                if(newItem.TryGetComponent(out EquipableItem eItem) && eItem.IsEquiped == true)
+                if (newItem.Slot.TryGetComponent(out BagSlot _))
                 {
+                    _inventoryManager.RemoveItemFromBag(newItem.Slot);
+                    _inventoryManager.AddItemToBag(this, newItem.Item);
+                }
+                else if (newItem.TryGetComponent(out EquipableItem eItem) && eItem.IsEquiped == true)
+                {
+                    _inventoryManager.RemoveItemFromDoll(newItem.Slot);
                     _inventoryManager.AddItemToBag(this, newItem.Item);
                     eItem.Unequip();
                 }
+
+                newItem.ChangeParent(this);
             }
 
             _item = newItem;

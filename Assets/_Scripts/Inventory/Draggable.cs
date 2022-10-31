@@ -62,7 +62,7 @@ public class Draggable : MonoBehaviour, IDraggable
 
     public void MoveToParent()
     {
-        transform.SetParent(Parent, false);
+        transform.SetParent(Parent);
         _rTransform.anchoredPosition = Parent.anchoredPosition;
 
         _canvasGroup.blocksRaycasts = true;

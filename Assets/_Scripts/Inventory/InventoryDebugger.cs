@@ -55,17 +55,78 @@ public class InventoryDebugger : MonoBehaviour
 
     private void TryPrint()
     {
-        if (Input.GetKeyDown(KeyCode.T))
-            _inventory.PrintBagInventoryFull();
+        if (Input.GetKeyDown(KeyCode.B))
+            PrintBagInventoryFull();
+        if (Input.GetKeyDown(KeyCode.D))
+            PrintDollInventoryFull();
+        if (Input.GetKeyDown(KeyCode.I))
+            PrintInventory();
+    }
+
+    private void PrintInventory()
+    {
+        var doll = _inventory.Doll.Items;
+        var bag = _inventory.Bag.Items;
+        Debug.Log("--------------DOLL-------------");
+        foreach (var key in doll.Keys)
+        {
+            Debug.Log(doll[key]);
+        }
+        Debug.Log("-----------------------------");
+        Debug.Log("--------------BAG-------------");
+        foreach (var key in bag.Keys)
+        {
+            Debug.Log(bag[key]);
+        }
+        Debug.Log("-----------------------------");
     }
 
     private void TryCreateItems()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
-            _inventory.CreateItem(_item1);
+            _inventory.CreateItem(_item1, _inventory.GetFirstEmptySlot());
         if (Input.GetKeyDown(KeyCode.Alpha2))
-            _inventory.CreateItem(_item2);
+            _inventory.CreateItem(_item2, _inventory.GetFirstEmptySlot());
         if (Input.GetKeyDown(KeyCode.Alpha3))
-            _inventory.CreateItem(_item3);
+            _inventory.CreateItem(_item3, _inventory.GetFirstEmptySlot());
+    }
+
+
+    [ContextMenu("Print/BagInventoryFull")]
+    public void PrintBagInventoryFull()
+    {
+        Debug.Log("========BAG INVENTORY========");
+
+        int i = 0;
+        foreach (var slot in _inventory.BagSlots)
+        {
+            if (slot.Peek() != null)
+                Debug.Log($"{i}-Item: '{slot.Peek()}' ");
+            else
+                Debug.Log($"{i}-Item is null");
+
+            i++;
+        }
+
+        Debug.Log("============END DEBUG=========");
+    }
+
+    [ContextMenu("Print/BagInventoryFull")]
+    public void PrintDollInventoryFull()
+    {
+        Debug.Log("========BAG INVENTORY========");
+
+        int i = 0;
+        foreach (var slot in _inventory.DollSlots)
+        {
+            if (slot.Peek() != null)
+                Debug.Log($"{i}-Item: '{slot.Peek()}' ");
+            else
+                Debug.Log($"{i}-Item is null");
+
+            i++;
+        }
+
+        Debug.Log("============END DEBUG=========");
     }
 }

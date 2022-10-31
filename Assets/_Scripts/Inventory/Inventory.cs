@@ -63,9 +63,9 @@ public class Inventory
 
         for (int i = 0; i < slots.Length; i++)
         {
-            if (startItems != null)
+            try
             {
-                if (i < startItems.Length - 1)
+                if (i < startItems.Length)
                 {
                     Debug.Log($"start item {i}: {startItems[i].name}");
                     if (startItems[i].Weight <= FreeWeight)
@@ -80,9 +80,8 @@ public class Inventory
                 {
                     ChangeSlotItem(slots[i], null);
                 }
-
             }
-            else
+            catch
             {
                 Debug.LogWarning("start items is null");
             }
@@ -95,10 +94,11 @@ public class Inventory
 
         if (itemToAdd.Weight <= FreeWeight)
         {
+            Weight += itemToAdd.Weight;
+
             ChangeSlotItem(slot, itemToAdd);
 
             OnItemAdded?.Invoke(itemToAdd);
-            Weight += itemToAdd.Weight;
         }
         else
         {
@@ -106,11 +106,12 @@ public class Inventory
         }
     }
 
-    public void Remove(InventorySlot slot, ItemSO itemToRemove)
+    public void Remove(InventorySlot slot)
     {
-        ChangeSlotItem(slot, null);
-
+        var itemToRemove = slot.Peek();
         Weight -= itemToRemove.Weight;
+
+        ChangeSlotItem(slot, null);
     }
 
     public void Clear()
@@ -121,5 +122,14 @@ public class Inventory
     public void ChangeSlotItem(InventorySlot slot, ItemSO newItem)
     {
         Items[slot] = newItem;
+    }
+
+    public void SwapItems(InventorySlot slot1, InventorySlot slot2)
+    {
+        var item1 = slot1.Peek().Item;
+        var item2 = slot2.Peek().Item;
+
+        Items[slot1] = item2;
+        Items[slot2] = item1;
     }
 }

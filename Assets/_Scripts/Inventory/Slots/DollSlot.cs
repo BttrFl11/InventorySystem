@@ -21,7 +21,7 @@ public class DollSlot : InventorySlot
                 {
                     if(_item.TryGetComponent(out EquipableItem eItem) && eItem.SlotType == _slotType)
                     {
-                        SwitchItems(_item, newItem);
+                        SwapItems(newItem);
 
                     }
                     else
@@ -29,12 +29,14 @@ public class DollSlot : InventorySlot
                         _inventoryManager.AddItemToBag(this, _item.Item);
                     }
 
-                    _inventoryManager.RemoveItemFromBag(newItem.Slot, newItem.Item);
+                    _inventoryManager.RemoveItemFromBag(newItem.Slot);
                     _inventoryManager.AddItemToDoll(this, newItem.Item);
                 }
                 else
                 {
-                    newItem.ChangeParent(_itemParent, this);
+                    _inventoryManager.RemoveItemFromBag(newItem.Slot);
+                    _inventoryManager.AddItemToDoll(this, newItem.Item);
+                    newItem.ChangeParent(this);
                 }
             }
 

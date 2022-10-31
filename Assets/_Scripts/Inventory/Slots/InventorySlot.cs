@@ -25,23 +25,27 @@ public class InventorySlot : MonoBehaviour, IDropHandler
         {
             if (_item != null)
             {
-                SwitchItems(_item, newItem);
+                SwapItems(newItem);
             }
             else
             {
-                newItem.ChangeParent(_itemParent, this);
+                newItem.ChangeParent(this);
             }
 
             _item = newItem;
         }
     }
 
-    protected virtual void SwitchItems(InventoryItem item1, InventoryItem item2)
+    protected virtual void SwapItems(InventoryItem newItem)
     {
-        item1.ChangeParent(item2.Parent, item2.Slot);
-        item2.ChangeParent(_itemParent, this);
+        var oldItem = _item;
+        var oldSlot = newItem.Slot;
 
-        item1.Slot.AttachItem(item1);
+        _inventoryManager.SwapItems(this, oldSlot);
+
+        newItem.ChangeParent(this);
+        oldItem.ChangeParent(oldSlot);
+        AttachItem(newItem);
     }
 
     public void Clear()
