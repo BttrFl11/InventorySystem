@@ -26,10 +26,6 @@ public class InventoryDebugger : MonoBehaviour
 
         //TryInitialize();
         TryCloseOpen();
-
-        Debug.ClearDeveloperConsole();
-        PrintDollInventoryFull();
-        Task.Delay(100);
     }
 
     private void TryCloseOpen()

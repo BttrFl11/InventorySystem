@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Newtonsoft.Json.Schema;
+using static UnityEditor.Progress;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -72,7 +74,7 @@ public class InventoryManager : MonoBehaviour
 
     private void UpdateUI(float freeWeight, float maxWeight)
     {
-        _weightText.text = $"{freeWeight} / {maxWeight} kg";
+        _weightText.text = $"{freeWeight:0.0} / {maxWeight:0.0} kg";
     }
 
     public void Initialize(Inventory bag, Inventory doll)
@@ -80,68 +82,66 @@ public class InventoryManager : MonoBehaviour
         _bagInventory = bag;
         _dollInventory = doll;
 
-        InitializeBag();
-        InitializeDoll();
+        InitializeSlots(BagSlots);
+        InitializeSlots(DollSlots);
 
         _bagInventory.OnWeightChanged += UpdateUI;
         UpdateUI(_bagInventory.Weight, _bagInventory.MaxWeight);
     }
 
-    private void InitializeDoll()
+    private void InitializeSlots(InventorySlot[] slots)
     {
-        for (int i = 0; i < _dollSlots.Length; i++)
+        bool isDoll = slots[0].TryGetComponent(out DollSlot _);
+        var inventory = isDoll ? _dollInventory : _bagInventory;
+
+        for (int i = 0; i < slots.Length; i++)
         {
-            _dollSlots[i].Clear();
+            slots[i].Clear();
 
             try
             {
-                var item = _dollInventory.Items[_dollSlots[i]];
-                string itemName = item == null ? "doll item is null" : item.name;
-                Debug.Log($"Doll Slot-{i}\nItem: {itemName}");
-
+                var item = inventory.Items[slots[i]];
                 if (item != null)
                 {
-                    var createdItem = CreateItem(item, _dollSlots[i], addToBag: false);
-                    if (createdItem.TryGetComponent(out EquipableItem eItem))
-                        eItem.Equip();
-                    else
-                        Debug.LogError("Doll item dont have equipable behaviour!");
+                    var createdItem = CreateItem(item, slots[i], addToBag: !isDoll, changeWeight: false);
 
-                    createdItem.ChangeParent(_dollSlots[i]);
+                    if (isDoll)
+                    {
+                        if (createdItem.TryGetComponent(out EquipableItem eItem))
+                            eItem.Equip();
+                        else
+                            Debug.LogError("Doll item dont have equipable behaviour!");
+                    }
+
+                    createdItem.ChangeParent(slots[i]);
                 }
             }
             catch
             {
-                Debug.LogWarning("Error: _dollInventory.Items['key'] is not found");
+                Debug.LogWarning("Error: inventory.Items['key'] is not found");
             }
-
         }
     }
 
-    private void InitializeBag()
+    private InventoryItem InstantiateItem(ItemSO newItemSO)
     {
-        for (int i = 0; i < _bagSlots.Length; i++)
-        {
-            _bagSlots[i].Clear();
+        var prefab = newItemSO.SlotType == SlotTypes.Types.None ? _inventoryItemPrefab : _inventoryEquipableItemPrefab;
+        GameObject itemGO = Instantiate(prefab, _panel.transform);
+        InventoryItem item = itemGO.GetComponent<InventoryItem>();
+        item.Item = newItemSO;
 
-            try
-            {
-                var item = _bagInventory.Items[_bagSlots[i]];
-                string itemName = item == null ? "bag item is null" : item.name;
-                Debug.Log($"Bag Slot-{i}\nItem: {itemName}");
+        return item;
+    }
 
-                if (item != null)
-                {
-                    var createdItem = CreateItem(item, _bagSlots[i], addToBag: true, changeWeight: false);
-                    createdItem.ChangeParent(_bagSlots[i]);
-                }
-            }
-            catch
-            {
-                Debug.LogWarning("Error: _bagInventory.Items['key'] is not found");
-            }
+    private void InitializeCreatedItem(InventoryItem createdItem, InventorySlot slot, bool addToBag, bool changeWeight)
+    {
+        if (IsOpen)
+            createdItem.ChangeParent(slot);
 
-        }
+        if (addToBag == true)
+            AddItemToBag(slot, createdItem.Item, changeWeight);
+        else
+            AddItemToDoll(slot, createdItem.Item);
     }
 
     public void SwapItems(InventorySlot slot1, InventorySlot slot2)
@@ -175,37 +175,12 @@ public class InventoryManager : MonoBehaviour
     {
         if (IsOpen)
         {
-            if (addToBag == false)
-            {
-                foreach (var key in _dollInventory.Items.Keys)
-                {
-                    if (key.TryGetComponent(out DollSlot dollSlot))
-                    {
-                        if (dollSlot.SlotType == newItemSO.SlotType && dollSlot.Peek() == null)
-                        {
-                            slot = dollSlot;
-                            break;
-                        }
-                    }
-                }
-            }
+            var createdItem = InstantiateItem(newItemSO);
+            InitializeCreatedItem(createdItem, slot, addToBag, changeWeight);
 
-            var prefab = newItemSO.SlotType == SlotTypes.Types.None ? _inventoryItemPrefab : _inventoryEquipableItemPrefab;
-            GameObject itemGO = Instantiate(prefab, _panel.transform);
-            InventoryItem item = itemGO.GetComponent<InventoryItem>();
+            Debug.Log($"Item {createdItem.Name} was created!");
 
-            item.Item = newItemSO;
-            if (IsOpen)
-                item.ChangeParent(slot);
-
-            if (addToBag == true)
-                AddItemToBag(slot, newItemSO, changeWeight);
-            else
-                AddItemToDoll(slot, newItemSO);
-
-            Debug.Log($"Item {item.Name} was created!");
-
-            return item;
+            return createdItem;
         }
         else
         {
@@ -213,6 +188,20 @@ public class InventoryManager : MonoBehaviour
                 AddItemToBag(slot, newItemSO, changeWeight);
             else
                 AddItemToDoll(slot, newItemSO);
+        }
+
+        return null;
+    }
+
+    public InventorySlot GetEmptyDollSlot(ItemSO itemToAdd)
+    {
+        foreach (var key in _dollInventory.Items.Keys)
+        {
+            if (key.TryGetComponent(out DollSlot dollSlot))
+            {
+                if (dollSlot.SlotType == itemToAdd.SlotType && dollSlot.Peek() == null)
+                    return dollSlot;
+            }
         }
 
         return null;
