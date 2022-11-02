@@ -30,11 +30,6 @@ public class Draggable : MonoBehaviour, IDraggable
         }
     }
 
-    protected virtual void OnEnable()
-    {
-        Parent = transform.parent.GetComponent<RectTransform>();
-    }
-
     public void OnBeginDrag(PointerEventData eventData)
     {
         transform.SetParent(_tempParent);

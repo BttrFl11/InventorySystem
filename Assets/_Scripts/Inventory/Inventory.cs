@@ -88,13 +88,14 @@ public class Inventory
         }
     }
 
-    public void Add(InventorySlot slot, ItemSO itemToAdd)
+    public void Add(InventorySlot slot, ItemSO itemToAdd, bool changeWeight = true)
     {
         if (itemToAdd == null) return;
 
         if (itemToAdd.Weight <= FreeWeight)
         {
-            Weight += itemToAdd.Weight;
+            if (changeWeight == true)
+                Weight += itemToAdd.Weight;
 
             ChangeSlotItem(slot, itemToAdd);
 
@@ -106,10 +107,12 @@ public class Inventory
         }
     }
 
-    public void Remove(InventorySlot slot)
+    public void Remove(InventorySlot slot, bool changeWeight = true)
     {
         var itemToRemove = slot.Peek();
-        Weight -= itemToRemove.Weight;
+
+        if (changeWeight == true)
+            Weight -= itemToRemove.Weight;
 
         ChangeSlotItem(slot, null);
     }

@@ -12,7 +12,7 @@ public class InventoryButton : MonoBehaviour
     public void OnButton()
     {
         var inventory = InventoryManager.Instance;
-        if (inventory.Bag == _npc.BagInventory)
+        if (inventory.Bag == _npc.BagInventory && inventory.IsOpen)
             return;
 
         inventory.SetPanelActive(true);

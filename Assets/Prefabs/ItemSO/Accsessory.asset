@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24ea25a7a62602349a8c092dfbb3b303, type: 3}
   m_Name: Accsessory
   m_EditorClassIdentifier: 
-  Icon: {fileID: -1875363483, guid: 62e34306754e45445afefce1f3b2c0d1, type: 3}
+  Icon: {fileID: 1802809850, guid: 62e34306754e45445afefce1f3b2c0d1, type: 3}
   SlotType: 6
   Weight: 0.2
   StackSize: 1

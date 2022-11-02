@@ -32,6 +32,12 @@ public class DollSlot : InventorySlot
                     _inventoryManager.RemoveItemFromBag(newItem.Slot);
                     _inventoryManager.AddItemToDoll(this, newItem.Item);
                 }
+                else if (newItem.Slot.TryGetComponent(out DollSlot _))
+                {
+                    _inventoryManager.RemoveItemFromDoll(newItem.Slot);
+                    _inventoryManager.AddItemToDoll(this, newItem.Item);
+                    newItem.ChangeParent(this);
+                }
                 else
                 {
                     _inventoryManager.RemoveItemFromBag(newItem.Slot);

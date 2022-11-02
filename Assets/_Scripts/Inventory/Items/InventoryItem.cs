@@ -40,13 +40,18 @@ public class InventoryItem : Draggable
         get => _item.name;
     }
 
-    protected override void OnEnable()
+    protected void OnEnable()
     {
         Slot = GetComponentInParent<InventorySlot>();
 
         Initialize();
+    }
 
-        base.OnEnable();
+    protected void Start()
+    {
+        if (Parent == null)
+            Parent = Slot.ItemParent;
+        MoveToParent();
     }
 
     public virtual void Initialize()

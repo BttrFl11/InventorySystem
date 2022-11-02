@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class InventoryDebugger : MonoBehaviour
@@ -25,6 +26,10 @@ public class InventoryDebugger : MonoBehaviour
 
         //TryInitialize();
         TryCloseOpen();
+
+        Debug.ClearDeveloperConsole();
+        PrintDollInventoryFull();
+        Task.Delay(100);
     }
 
     private void TryCloseOpen()
@@ -115,13 +120,13 @@ public class InventoryDebugger : MonoBehaviour
     [ContextMenu("Print/BagInventoryFull")]
     public void PrintDollInventoryFull()
     {
-        Debug.Log("========BAG INVENTORY========");
+        Debug.Log("========DOLL INVENTORY========");
 
         int i = 0;
         foreach (var slot in InventoryManager.Instance.DollSlots)
         {
             if (slot.Peek() != null)
-                Debug.Log($"{i}-Item: '{slot.Peek()}' ");
+                Debug.Log($"{i}-Item: '{slot.Peek().Name}' ");
             else
                 Debug.Log($"{i}-Item is null");
 
