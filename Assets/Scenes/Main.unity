@@ -1600,7 +1600,9 @@ MonoBehaviour:
     - {fileID: 11400000, guid: d8750cf5cffffe4439a95da811047ad1, type: 2}
     - {fileID: 11400000, guid: 03f175c7884dcf542b18ef0c202449bd, type: 2}
     - {fileID: 11400000, guid: dc5c23243b9db4243bd4a4664407278f, type: 2}
-    _startEquipedItems: []
+    _startEquipedItems:
+    - {fileID: 11400000, guid: 3ad4caaeae22b8b498adee1e2e68089a, type: 2}
+    - {fileID: 11400000, guid: 03f175c7884dcf542b18ef0c202449bd, type: 2}
 --- !u!1001 &1155220912
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2447,6 +2449,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: ed4da691815e05048957cec66ce8b833, type: 2}
     _startEquipedItems:
     - {fileID: 11400000, guid: f9795bb22a5586442b15bfca1474adf5, type: 2}
+    - {fileID: 11400000, guid: ed4da691815e05048957cec66ce8b833, type: 2}
+    - {fileID: 11400000, guid: dc5c23243b9db4243bd4a4664407278f, type: 2}
 --- !u!1 &1858268245
 GameObject:
   m_ObjectHideFlags: 0

@@ -53,7 +53,7 @@ public class InventorySlot : MonoBehaviour, IDropHandler
         AttachItem(newItem);
     }
 
-    public void Clear()
+    public virtual void Clear()
     {
         if(_item != null)
         {

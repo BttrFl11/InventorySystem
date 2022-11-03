@@ -11,7 +11,7 @@ public class BagSlot : InventorySlot
             {
                 if (newItem.TryGetComponent(out EquipableItem eItem) && eItem.IsEquiped == true)
                 {
-                    var slot = _inventoryManager.GetFirstEmptySlot();
+                    var slot = _inventoryManager.GetEmptyBagSlot();
                     _item.ChangeParent(slot);
 
                     _inventoryManager.RemoveItemFromDoll(newItem.Slot);

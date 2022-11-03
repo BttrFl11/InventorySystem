@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
+using System.Collections.ObjectModel;
+using Unity.VisualScripting;
 
 [Serializable]
 public class Inventory
@@ -57,33 +60,30 @@ public class Inventory
         }
     }
 
-    public Inventory(float weight, InventorySlot[] slots, ItemSO[] startItems)
+    public Inventory(float weight, InventorySlot[] slots, ItemSO[] startItems, bool isDoll)
     {
         MaxWeight = weight;
 
         for (int i = 0; i < slots.Length; i++)
         {
-            try
-            {
-                if (i < startItems.Length)
-                {
-                    Debug.Log($"start item {i}: {startItems[i].name}");
-                    if (startItems[i].Weight <= FreeWeight)
-                    {
-                        ChangeSlotItem(slots[i], startItems[i]);
+            ChangeSlotValue(slots[i], null);
+        }
 
-                        OnItemAdded?.Invoke(startItems[i]);
-                        Weight += startItems[i].Weight;
+        for (int i = 0; i < startItems.Length; i++)
+        {
+            if (isDoll)
+            {
+                foreach (var slot in slots)
+                {
+                    if (slot.TryGetComponent(out DollSlot dollSlot) && dollSlot.SlotType == startItems[i].SlotType)
+                    {
+                        Add(slot, startItems[i]);
                     }
                 }
-                else
-                {
-                    ChangeSlotItem(slots[i], null);
-                }
             }
-            catch
+            else
             {
-                Debug.LogWarning("start items is null");
+                Add(slots[i], startItems[i]);
             }
         }
     }
@@ -97,7 +97,7 @@ public class Inventory
             if (changeWeight == true)
                 Weight += itemToAdd.Weight;
 
-            ChangeSlotItem(slot, itemToAdd);
+            ChangeSlotValue(slot, itemToAdd);
 
             OnItemAdded?.Invoke(itemToAdd);
         }
@@ -114,7 +114,7 @@ public class Inventory
         if (changeWeight == true)
             Weight -= itemToRemove.Weight;
 
-        ChangeSlotItem(slot, null);
+        ChangeSlotValue(slot, null);
     }
 
     public void Clear()
@@ -122,7 +122,7 @@ public class Inventory
         Weight = 0;
     }
 
-    public void ChangeSlotItem(InventorySlot slot, ItemSO newItem)
+    public void ChangeSlotValue(InventorySlot slot, ItemSO newItem)
     {
         Items[slot] = newItem;
     }

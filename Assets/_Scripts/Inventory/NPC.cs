@@ -31,7 +31,7 @@ public class NPC
     public void Initialize()
     {
         var inventory = InventoryManager.Instance;
-        BagInventory = new(_inventoryWeight, inventory.BagSlots, _startItems);
-        DollInventory = new(Mathf.Infinity, inventory.DollSlots, _startEquipedItems);
+        BagInventory = new(_inventoryWeight, inventory.BagSlots, _startItems, false);
+        DollInventory = new(Mathf.Infinity, inventory.DollSlots, _startEquipedItems, true);
     }
 }

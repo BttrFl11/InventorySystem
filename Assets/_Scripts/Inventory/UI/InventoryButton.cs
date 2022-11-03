@@ -13,9 +13,13 @@ public class InventoryButton : MonoBehaviour
     {
         var inventory = InventoryManager.Instance;
         if (inventory.Bag == _npc.BagInventory && inventory.IsOpen)
-            return;
-
-        inventory.SetPanelActive(true);
-        inventory.Initialize(_npc.BagInventory, _npc.DollInventory);
+        {
+            inventory.SetPanelActive(false);
+        }
+        else
+        {
+            inventory.SetPanelActive(true);
+            inventory.Initialize(_npc.BagInventory, _npc.DollInventory);
+        }
     }
 }

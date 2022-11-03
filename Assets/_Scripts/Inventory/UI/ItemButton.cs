@@ -17,6 +17,6 @@ public class ItemButton : MonoBehaviour
     public void OnButton()
     {
         var inventory = InventoryManager.Instance;
-        inventory.CreateItem(_itemToAdd, inventory.GetFirstEmptySlot());
+        inventory.CreateBagItem(_itemToAdd, inventory.GetEmptyBagSlot());
     }
 }

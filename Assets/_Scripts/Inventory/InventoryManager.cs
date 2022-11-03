@@ -82,6 +82,8 @@ public class InventoryManager : MonoBehaviour
         _bagInventory = bag;
         _dollInventory = doll;
 
+        ClearAllClots();
+
         InitializeSlots(BagSlots);
         InitializeSlots(DollSlots);
 
@@ -94,32 +96,35 @@ public class InventoryManager : MonoBehaviour
         bool isDoll = slots[0].TryGetComponent(out DollSlot _);
         var inventory = isDoll ? _dollInventory : _bagInventory;
 
-        for (int i = 0; i < slots.Length; i++)
+        for (int i = 0; i < inventory.Items.Count; i++)
         {
             slots[i].Clear();
 
-            try
+            var item = inventory.Items[slots[i]];
+            if (item != null)
             {
-                var item = inventory.Items[slots[i]];
-                if (item != null)
+                if (isDoll)
                 {
-                    var createdItem = CreateItem(item, slots[i], addToBag: !isDoll, changeWeight: false);
-
-                    if (isDoll)
-                    {
-                        if (createdItem.TryGetComponent(out EquipableItem eItem))
-                            eItem.Equip();
-                        else
-                            Debug.LogError("Doll item dont have equipable behaviour!");
-                    }
-
-                    createdItem.ChangeParent(slots[i]);
+                    CreateDollItem(item);
+                }
+                else
+                {
+                    CreateBagItem(item, GetEmptyBagSlot(), changeWeight: false);
                 }
             }
-            catch
-            {
-                Debug.LogWarning("Error: inventory.Items['key'] is not found");
-            }
+        }
+    }
+
+    private void ClearAllClots()
+    {
+        foreach (var slot in DollSlots)
+        {
+            slot.Clear();
+        }
+
+        foreach (var slot in BagSlots)
+        {
+            slot.Clear();
         }
     }
 
@@ -171,12 +176,18 @@ public class InventoryManager : MonoBehaviour
 
     public void SetPanelActive(bool active) => _panel.SetActive(active);
 
-    public InventoryItem CreateItem(ItemSO newItemSO, InventorySlot slot, bool addToBag = true, bool changeWeight = true)
+    public InventoryItem CreateDollItem(ItemSO newItemSO)
     {
+        var slot = GetEmptyDollSlot(newItemSO);
+        if (slot == null)
+            return null;
+
         if (IsOpen)
         {
             var createdItem = InstantiateItem(newItemSO);
-            InitializeCreatedItem(createdItem, slot, addToBag, changeWeight);
+            InitializeCreatedItem(createdItem, slot, addToBag: false, changeWeight: false);
+            createdItem.ChangeParent(slot);
+            createdItem.GetComponent<EquipableItem>().Equip();
 
             Debug.Log($"Item {createdItem.Name} was created!");
 
@@ -184,10 +195,27 @@ public class InventoryManager : MonoBehaviour
         }
         else
         {
-            if (addToBag == true)
-                AddItemToBag(slot, newItemSO, changeWeight);
-            else
-                AddItemToDoll(slot, newItemSO);
+            AddItemToDoll(slot, newItemSO);
+        }
+
+        return null;
+    }
+
+    public InventoryItem CreateBagItem(ItemSO newItemSO, InventorySlot slot, bool changeWeight = true)
+    {
+        if (IsOpen)
+        {
+            var createdItem = InstantiateItem(newItemSO);
+            InitializeCreatedItem(createdItem, slot, addToBag: true, changeWeight: changeWeight);
+            GetEmptyDollSlot(newItemSO);
+
+            Debug.Log($"Item {createdItem.Name} was created!");
+
+            return createdItem;
+        }
+        else
+        {
+            AddItemToBag(slot, newItemSO, changeWeight);
         }
 
         return null;
@@ -207,7 +235,7 @@ public class InventoryManager : MonoBehaviour
         return null;
     }
 
-    public InventorySlot GetFirstEmptySlot()
+    public InventorySlot GetEmptyBagSlot()
     {
         foreach (var slot in _bagSlots)
         {

@@ -113,6 +113,24 @@ public class InventoryDebugger : MonoBehaviour
         Debug.Log("============END DEBUG=========");
     }
 
+    public void PrintDollInventoryFull(Inventory inventory)
+    {
+        Debug.Log("========BAG INVENTORY========");
+
+        int i = 0;
+        foreach (var item in inventory.Items.Values)
+        {
+            if (item != null)
+                Debug.Log($"{i}-Item: '{item.name}' ");
+            else
+                Debug.Log($"{i}-Item is null");
+
+            i++;
+        }
+
+        Debug.Log("============END DEBUG=========");
+    }
+
     [ContextMenu("Print/BagInventoryFull")]
     public void PrintDollInventoryFull()
     {
