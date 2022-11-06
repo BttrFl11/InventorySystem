@@ -69,7 +69,8 @@ public class InventoryManager : MonoBehaviour
 
     private void OnDisable()
     {
-        _bagInventory.OnWeightChanged -= UpdateUI;
+        if (_bagInventory != null)
+            _bagInventory.OnWeightChanged -= UpdateUI;
     }
 
     private void UpdateUI(float freeWeight, float maxWeight)

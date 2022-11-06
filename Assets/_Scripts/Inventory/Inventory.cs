@@ -78,6 +78,7 @@ public class Inventory
                     if (slot.TryGetComponent(out DollSlot dollSlot) && dollSlot.SlotType == startItems[i].SlotType)
                     {
                         Add(slot, startItems[i]);
+                        break;
                     }
                 }
             }
