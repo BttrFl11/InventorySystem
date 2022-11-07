@@ -1,11 +1,13 @@
 using UnityEngine.UI;
 using UnityEngine;
+using TMPro;
 
 public class InventoryItem : Draggable
 {
     [SerializeField] protected ItemSO _item;
     [SerializeField] protected Image _itemIcon;
-
+    [SerializeField] protected TextMeshProUGUI _stackCountText;
+    
     protected InventorySlot _slot;
 
     public InventorySlot Slot
@@ -25,20 +27,23 @@ public class InventoryItem : Draggable
         }
     }
 
-    public float Weight
+    private int _stack;
+    public int Stack
     {
-        get => _item.Weight;
+        get => _stack;
+        set
+        {
+            _stack = value;
+            if (_stack > MaxStack)
+                _stack = MaxStack;
+
+            _stackCountText.text = Stack.ToString();
+        }
     }
 
-    public float StackSize
-    {
-        get => _item.StackSize;
-    }
-
-    public string Name
-    {
-        get => _item.name;
-    }
+    public float Weight => _item.Weight;
+    public int MaxStack => _item.MaxStack;
+    public string Name => _item.name;
 
     protected void OnEnable()
     {

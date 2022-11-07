@@ -106,7 +106,8 @@ public class InventoryManager : MonoBehaviour
                 }
                 else
                 {
-                    CreateBagItem(item, slots[i], changeWeight: false);
+                    var createdItem = CreateBagItem(item, slots[i], changeWeight: false);
+                    createdItem.Stack = inventory.Stacks[slots[i]];
                 }
             }
         }
@@ -154,9 +155,39 @@ public class InventoryManager : MonoBehaviour
     public void AddItemToBag(InventorySlot slot, ItemSO itemToAdd, bool changeWeight = true)
     {
         if (_bagInventory.IsFull() == false)
-            _bagInventory.Add(slot, itemToAdd, changeWeight);
+        {
+            bool added = _bagInventory.Add(slot, itemToAdd, changeWeight);
+            if (added == false)
+            {
+                slot = GetEmptyBagSlot();
+                _bagInventory.Add(slot, itemToAdd, changeWeight);
+                slot.Item.Stack = _bagInventory.Stacks[slot];
+            }
+        }
         else
+        {
             Debug.Log("Inventory is full");
+        }
+    }
+
+    public void AddItemToBag(ItemSO itemToAdd)
+    {
+        if (_bagInventory.HasItem(itemToAdd, out InventorySlot slot))
+        {
+            if(_bagInventory.HasFreeStack(slot, itemToAdd))
+            {
+                _bagInventory.Add(slot, itemToAdd);
+
+                if (IsOpen)
+                {
+                    slot.Item.Stack = _bagInventory.Stacks[slot];
+                }
+            }
+        }
+        else
+        {
+            Debug.LogError("Dont have that item to add it to the stack!");
+        }
     }
 
     public void RemoveItemFromBag(InventorySlot slot, bool changeWeight = true)
@@ -201,21 +232,28 @@ public class InventoryManager : MonoBehaviour
         return null;
     }
 
-    public InventoryItem CreateBagItem(ItemSO newItemSO, InventorySlot slot, bool changeWeight = true)
+    public InventoryItem CreateBagItem(ItemSO newItem, InventorySlot slot, bool changeWeight = true)
     {
-        if (IsOpen)
+        if (_bagInventory.HasItem(newItem, out InventorySlot s) && _bagInventory.HasFreeStack(s, newItem))
         {
-            var createdItem = InstantiateItem(newItemSO);
-            InitializeCreatedItem(createdItem, slot, addToBag: true, changeWeight: changeWeight);
-            GetEmptyDollSlot(newItemSO);
-
-            Debug.Log($"Item {createdItem.Name} was created!");
-
-            return createdItem;
+            AddItemToBag(newItem);
         }
         else
         {
-            AddItemToBag(slot, newItemSO, changeWeight);
+            if (IsOpen)
+            {
+                var createdItem = InstantiateItem(newItem);
+                InitializeCreatedItem(createdItem, slot, addToBag: true, changeWeight: changeWeight);
+                GetEmptyDollSlot(newItem);
+
+                Debug.Log($"Item {createdItem.Name} was created!");
+
+                return createdItem;
+            }
+            else
+            {
+                AddItemToBag(slot, newItem, changeWeight);
+            }
         }
 
         return null;

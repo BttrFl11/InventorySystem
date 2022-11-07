@@ -11,6 +11,7 @@ public class Inventory
     private float _maxWeight;
     private float _weight;
     private Dictionary<InventorySlot, ItemSO> _items = new();
+    private Dictionary<InventorySlot, int> _stacks = new();
 
     /// <summary>
     /// <param name="arg1"> Weight </param>
@@ -54,53 +55,88 @@ public class Inventory
             _items = value;
         }
     }
+    public Dictionary<InventorySlot, int> Stacks
+    {
+        get => _stacks;
+        protected set
+        {
+            _stacks = value;
+        }
+    }
 
-    public Inventory(float weight, InventorySlot[] slots, ItemSO[] startItems, bool isDoll)
+    //public Inventory(float weight, InventorySlot[] slots, ItemSO[] startItems, bool isDoll)
+    //{
+    //    MaxWeight = weight;
+
+    //    for (int i = 0; i < slots.Length; i++)
+    //    {
+    //        ChangeSlotValue(slots[i], null);
+    //        ChangeStackValue(slots[i], 0);
+    //    }
+
+    //    for (int i = 0; i < startItems.Length; i++)
+    //    {
+    //        if (isDoll)
+    //        {
+    //            foreach (var slot in slots)
+    //            {
+    //                if (slot.TryGetComponent(out DollSlot dollSlot) && dollSlot.SlotType == startItems[i].SlotType)
+    //                {
+    //                    Add(slot, startItems[i]);
+    //                    break;
+    //                }
+    //            }
+    //        }
+    //        else
+    //        {
+    //            Add(slots[i], startItems[i]);
+    //        }
+    //    }
+    //}
+
+    public Inventory(float weight, InventorySlot[] slots)
     {
         MaxWeight = weight;
 
         for (int i = 0; i < slots.Length; i++)
         {
             ChangeSlotValue(slots[i], null);
-        }
-
-        for (int i = 0; i < startItems.Length; i++)
-        {
-            if (isDoll)
-            {
-                foreach (var slot in slots)
-                {
-                    if (slot.TryGetComponent(out DollSlot dollSlot) && dollSlot.SlotType == startItems[i].SlotType)
-                    {
-                        Add(slot, startItems[i]);
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                Add(slots[i], startItems[i]);
-            }
+            ChangeStackValue(slots[i], 0);
         }
     }
 
-    public void Add(InventorySlot slot, ItemSO itemToAdd, bool changeWeight = true)
+    public bool Add(InventorySlot slot, ItemSO itemToAdd, bool changeWeight = true)
     {
-        if (itemToAdd == null) return;
+        if (itemToAdd == null) return false;
 
-        if (itemToAdd.Weight <= FreeWeight)
+        if (HasFreeWeight(itemToAdd) && HasFreeStack(slot, itemToAdd))
         {
             if (changeWeight == true)
                 Weight += itemToAdd.Weight;
 
             ChangeSlotValue(slot, itemToAdd);
+            ChangeStackValue(slot, Stacks[slot] + 1);
 
             OnItemAdded?.Invoke(itemToAdd);
+
+            return true;
         }
-        else
-        {
-            Debug.LogError("No free weight!");
-        }
+
+        return false;
+    }
+
+    public bool HasFreeStack(InventorySlot slot, ItemSO item)
+    {
+        if (Stacks[slot] < item.MaxStack)
+            return true;
+        return false;
+    }
+
+    public bool HasFreeWeight(ItemSO item)
+    {
+        if (item.Weight <= FreeWeight)
+            return true;
+        return false;
     }
 
     public void Remove(InventorySlot slot, bool changeWeight = true)
@@ -123,6 +159,11 @@ public class Inventory
         Items[slot] = newItem;
     }
 
+    public void ChangeStackValue(InventorySlot slot, int newStack)
+    {
+        Stacks[slot] = newStack;
+    }
+
     public void SwapItems(InventorySlot slot1, InventorySlot slot2)
     {
         var item1 = slot1.Peek().Item;
@@ -140,5 +181,33 @@ public class Inventory
                 return false;
         }
         return true;
+    }
+
+    public bool HasItem(ItemSO item)
+    {
+        foreach (var i in Items.Values)
+        {
+            if (i == item)
+                return true;
+        }
+        return false;
+    }
+
+    public bool HasItem(ItemSO item, out InventorySlot slot)
+    {
+        var slots = Items.Keys.ToArray();
+        slot = null;
+
+        int i = 0;
+        foreach (var item2 in Items.Values)
+        {
+            if(item2 == item)
+            {
+                slot = slots[i];
+                return true;
+            }
+            i++;
+        }
+        return false;
     }
 }
