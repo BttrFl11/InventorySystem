@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using Newtonsoft.Json.Schema;
-using static UnityEditor.Progress;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -99,8 +97,6 @@ public class InventoryManager : MonoBehaviour
 
         for (int i = 0; i < inventory.Items.Count; i++)
         {
-            slots[i].Clear();
-
             var item = inventory.Items[slots[i]];
             if (item != null)
             {
@@ -110,7 +106,7 @@ public class InventoryManager : MonoBehaviour
                 }
                 else
                 {
-                    CreateBagItem(item, GetEmptyBagSlot(), changeWeight: false);
+                    CreateBagItem(item, slots[i], changeWeight: false);
                 }
             }
         }
@@ -157,7 +153,10 @@ public class InventoryManager : MonoBehaviour
 
     public void AddItemToBag(InventorySlot slot, ItemSO itemToAdd, bool changeWeight = true)
     {
-        _bagInventory.Add(slot, itemToAdd, changeWeight);
+        if (_bagInventory.IsFull() == false)
+            _bagInventory.Add(slot, itemToAdd, changeWeight);
+        else
+            Debug.Log("Inventory is full");
     }
 
     public void RemoveItemFromBag(InventorySlot slot, bool changeWeight = true)

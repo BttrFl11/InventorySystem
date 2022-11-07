@@ -10,7 +10,6 @@ public class Inventory
 {
     private float _maxWeight;
     private float _weight;
-
     private Dictionary<InventorySlot, ItemSO> _items = new();
 
     /// <summary>
@@ -47,10 +46,6 @@ public class Inventory
         get => MaxWeight - Weight;
     }
 
-    /// <summary>
-    /// <param name="agr1" Index of the slot </param>
-    /// <param name="arg2" Item </param>
-    /// </summary>
     public Dictionary<InventorySlot, ItemSO> Items
     {
         get => _items;
@@ -135,5 +130,15 @@ public class Inventory
 
         Items[slot1] = item2;
         Items[slot2] = item1;
+    }
+
+    public bool IsFull()
+    {
+        foreach (var slot in Items.Keys)
+        {
+            if (slot.Peek() == null)
+                return false;
+        }
+        return true;
     }
 }

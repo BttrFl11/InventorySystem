@@ -12,25 +12,14 @@ public class DollSlot : InventorySlot
 
     public override void OnDrop(PointerEventData eventData)
     {
-        if (eventData.pointerDrag.TryGetComponent(out EquipableItem newItem) 
+        if (eventData.pointerDrag.TryGetComponent(out EquipableItem newItem)
             && newItem.SlotType == _slotType)
         {
             if (newItem != _item)
             {
                 if (_item != null)
                 {
-                    if(_item.TryGetComponent(out EquipableItem eItem) && eItem.SlotType == _slotType)
-                    {
-                        SwapItems(newItem);
-
-                    }
-                    else
-                    {
-                        _inventoryManager.AddItemToBag(this, _item.Item);
-                    }
-
-                    _inventoryManager.RemoveItemFromBag(newItem.Slot);
-                    _inventoryManager.AddItemToDoll(this, newItem.Item);
+                    SwapItems(newItem);
                 }
                 else if (newItem.Slot.TryGetComponent(out DollSlot _))
                 {
@@ -49,5 +38,21 @@ public class DollSlot : InventorySlot
             _item = newItem;
             newItem.Equip();
         }
+    }
+
+    protected override void SwapItems(InventoryItem newItem)
+    {
+        _item.GetComponent<EquipableItem>().Unequip();
+        var newItemSlot = newItem.Slot;
+        var oldItem = _item;
+
+        _inventoryManager.RemoveItemFromDoll(this);
+        _inventoryManager.RemoveItemFromBag(newItem.Slot);
+        _inventoryManager.AddItemToBag(newItem.Slot, _item.Item);
+        _inventoryManager.AddItemToDoll(this, newItem.Item);
+
+        oldItem.ChangeParent(newItemSlot);
+        newItem.ChangeParent(this);
+        newItemSlot.AttachItem(oldItem);
     }
 }
