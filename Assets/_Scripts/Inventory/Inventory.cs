@@ -64,36 +64,6 @@ public class Inventory
         }
     }
 
-    //public Inventory(float weight, InventorySlot[] slots, ItemSO[] startItems, bool isDoll)
-    //{
-    //    MaxWeight = weight;
-
-    //    for (int i = 0; i < slots.Length; i++)
-    //    {
-    //        ChangeSlotValue(slots[i], null);
-    //        ChangeStackValue(slots[i], 0);
-    //    }
-
-    //    for (int i = 0; i < startItems.Length; i++)
-    //    {
-    //        if (isDoll)
-    //        {
-    //            foreach (var slot in slots)
-    //            {
-    //                if (slot.TryGetComponent(out DollSlot dollSlot) && dollSlot.SlotType == startItems[i].SlotType)
-    //                {
-    //                    Add(slot, startItems[i]);
-    //                    break;
-    //                }
-    //            }
-    //        }
-    //        else
-    //        {
-    //            Add(slots[i], startItems[i]);
-    //        }
-    //    }
-    //}
-
     public Inventory(float weight, InventorySlot[] slots)
     {
         MaxWeight = weight;

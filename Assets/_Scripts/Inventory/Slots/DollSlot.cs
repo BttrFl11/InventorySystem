@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -5,10 +6,7 @@ public class DollSlot : InventorySlot
 {
     [SerializeField] private SlotTypes.Types _slotType;
 
-    public SlotTypes.Types SlotType
-    {
-        get => _slotType;
-    }
+    public SlotTypes.Types SlotType => _slotType;
 
     public override void OnDrop(PointerEventData eventData)
     {

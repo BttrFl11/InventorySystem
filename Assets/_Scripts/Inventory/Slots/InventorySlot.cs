@@ -1,22 +1,35 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class InventorySlot : MonoBehaviour, IDropHandler
 {
     [SerializeField] protected RectTransform _itemParent;
+    [SerializeField] protected TextMeshProUGUI _stackCountText;
+
+    private int _stack;
+    public int Stack
+    {
+        get => _stack;
+        set
+        {
+            _stack = value;
+            if (_stack > MaxStack)
+                _stack = MaxStack;
+            else if (_stack == 0 || _stack == 1)
+                _stackCountText.enabled = false;
+
+            _stackCountText.enabled = true;
+            _stackCountText.text = Stack.ToString();
+        }
+    }
 
     protected InventoryItem _item;
     protected InventoryManager _inventoryManager;
 
-    public RectTransform ItemParent
-    {
-        get => _itemParent;
-    }
-
-    public InventoryItem Item
-    {
-        get => _item;
-    }
+    public int MaxStack => _item.Item.MaxStack;
+    public RectTransform ItemParent => _itemParent;
+    public InventoryItem Item => _item;
 
     protected virtual void Awake()
     {
