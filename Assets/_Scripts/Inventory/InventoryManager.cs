@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections.Generic;
 
 public class InventoryManager : MonoBehaviour
 {
@@ -152,10 +153,7 @@ public class InventoryManager : MonoBehaviour
                 _bagInventory.Add(slot, itemToAdd, changeWeight);
             }
 
-            if (_bagInventory.HasFreeStack(slot, itemToAdd) && IsOpen)
-            {
-                slot.Stack = _bagInventory.Stacks[slot];
-            }
+            slot.Stack = _bagInventory.Stacks[slot];
         }
         else
         {
@@ -244,5 +242,19 @@ public class InventoryManager : MonoBehaviour
         }
 
         return null;
+    }
+
+    public InventorySlot GetEmptyBagSlot(ItemSO itemToAdd)
+    {
+        if (_bagInventory.HasItem(itemToAdd, out List<InventorySlot> slots))
+        {
+            foreach (var slot in slots)
+            {
+                if (_bagInventory.HasFreeStack(slot, itemToAdd))
+                    return slot;
+            }
+        }
+
+        return GetEmptyBagSlot();
     }
 }

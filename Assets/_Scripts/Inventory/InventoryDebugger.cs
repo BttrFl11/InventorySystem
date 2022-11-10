@@ -62,6 +62,18 @@ public class InventoryDebugger : MonoBehaviour
             PrintDollInventoryFull();
         if (Input.GetKeyDown(KeyCode.I))
             PrintInventory();
+        if (Input.GetKeyDown(KeyCode.S))
+            PrintStacks();
+    }
+
+    private void PrintStacks()
+    {
+        int i = 0;
+        foreach (var stack in InventoryManager.Instance.Bag.Stacks)
+        {
+            Debug.Log($"slot {i}: {stack.Value}");
+            i++;
+        }
     }
 
     private void PrintInventory()

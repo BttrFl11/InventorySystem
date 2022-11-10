@@ -163,17 +163,39 @@ public class Inventory
         return false;
     }
 
-    public bool HasItem(ItemSO item, out InventorySlot slot)
+    public bool HasItem(ItemSO item, out List<InventorySlot> slots)
     {
-        var slots = Items.Keys.ToArray();
-        slot = null;
+        bool hasSlot = false;
+        var allSlots = Items.Keys.ToArray();
+        slots = new List<InventorySlot>();
 
         int i = 0;
         foreach (var item2 in Items.Values)
         {
             if(item2 == item)
             {
-                slot = slots[i];
+                slots.Add(allSlots[i]);
+
+                if (hasSlot == false)
+                    hasSlot = true;
+            }
+            i++;
+        }
+
+        return hasSlot;
+    }
+
+    public bool HasItem(ItemSO item, out InventorySlot slot)
+    {
+        var allSlots = Items.Keys.ToArray();
+        slot = null;
+
+        int i = 0;
+        foreach (var item2 in Items.Values)
+        {
+            if (item2 == item)
+            {
+                slot = allSlots[i];
                 return true;
             }
             i++;
