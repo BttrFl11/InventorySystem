@@ -146,13 +146,7 @@ public class InventoryManager : MonoBehaviour
     {
         if (_bagInventory.IsFull() == false)
         {
-            bool added = _bagInventory.Add(slot, itemToAdd, changeWeight);
-            if (added == false)
-            {
-                slot = GetEmptyBagSlot();
-                _bagInventory.Add(slot, itemToAdd, changeWeight);
-            }
-
+             _bagInventory.Add(slot, itemToAdd, changeWeight);
             slot.Stack = _bagInventory.Stacks[slot];
         }
         else
@@ -202,10 +196,17 @@ public class InventoryManager : MonoBehaviour
     {
         bool hasStack = false;
         InventoryItem createdItem = null;
-        if (_bagInventory.HasItem(newItem, out InventorySlot newSlot) && _bagInventory.HasFreeStack(newSlot, newItem))
+
+        if (_bagInventory.HasItem(newItem, out List<InventorySlot> newSlots))
         {
-            slot = newSlot;
-            hasStack = true;
+            foreach (var newSlot in newSlots)
+            {
+                if(_bagInventory.HasFreeStack(newSlot, newItem))
+                {
+                    hasStack = true;
+                    break;
+                }
+            }
         }
 
         if (IsOpen && hasStack == false)
