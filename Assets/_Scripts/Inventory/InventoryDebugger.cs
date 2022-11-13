@@ -3,13 +3,13 @@ using UnityEngine;
 
 public class InventoryDebugger : MonoBehaviour
 {
-    [Header("Debug")]
+    //[Header("Debug")]
     //[SerializeField] private ItemSO _item1;
     //[SerializeField] private ItemSO _item2;
     //[SerializeField] private ItemSO _item3;
     //[SerializeField] private NPC[] _npcs;
 
-    private int fKeyStart = 282;
+    //private int fKeyStart = 282;
 
     //private void Start()
     //{

@@ -14,8 +14,8 @@ public class BagSlot : InventorySlot
                     var slot = _inventoryManager.GetEmptyBagSlot();
                     _item.ChangeParent(slot);
 
+                    _inventoryManager.AddItemToBag(this, newItem.Slot, newItem.Item);
                     _inventoryManager.RemoveItemFromDoll(newItem.Slot);
-                    _inventoryManager.AddItemToBag(this, newItem.Item);
 
                     newItem.ChangeParent(this);
 
@@ -30,13 +30,14 @@ public class BagSlot : InventorySlot
             {
                 if (newItem.Slot.TryGetComponent(out BagSlot _))
                 {
-                    _inventoryManager.RemoveItemFromBag(newItem.Slot);
-                    _inventoryManager.AddItemToBag(this, newItem.Item);
+                    var stack = newItem.Slot.Stack;
+                    _inventoryManager.AddItemToBag(this, newItem.Slot, newItem.Item);
+                    _inventoryManager.RemoveItemFromBag(newItem.Slot, stack);
                 }
                 else if (newItem.TryGetComponent(out EquipableItem eItem) && eItem.IsEquiped == true)
                 {
+                    _inventoryManager.AddItemToBag(this, newItem.Slot , newItem.Item);
                     _inventoryManager.RemoveItemFromDoll(newItem.Slot);
-                    _inventoryManager.AddItemToBag(this, newItem.Item);
                     eItem.Unequip();
                 }
 

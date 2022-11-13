@@ -100,6 +100,8 @@ public class InventoryManager : MonoBehaviour
         {
             var slot = slots[i];
             var item = inventory.Items[slot];
+            slot.Stack = 0;
+
             if (item != null)
             {
                 if (isDoll)
@@ -142,12 +144,13 @@ public class InventoryManager : MonoBehaviour
         _bagInventory.SwapItems(slot1, slot2);
     }
 
-    public void AddItemToBag(InventorySlot slot, ItemSO itemToAdd, bool changeWeight = true)
+    public void AddItemToBag(InventorySlot newSlot, InventorySlot oldSlot, ItemSO itemToAdd, bool changeWeight = true)
     {
         if (_bagInventory.IsFull() == false)
         {
-             _bagInventory.Add(slot, itemToAdd, changeWeight);
-            slot.Stack = _bagInventory.Stacks[slot];
+            var newStack = _bagInventory.Stacks[oldSlot];
+            _bagInventory.Add(newSlot, itemToAdd, newStack, changeWeight);
+            newSlot.Stack = newStack;
         }
         else
         {
@@ -155,9 +158,22 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    public void RemoveItemFromBag(InventorySlot slot, bool changeWeight = true)
+    private void AddCreatedItemToBag(InventorySlot newSlot, ItemSO itemToAdd, bool changeWeight = true)
     {
-        _bagInventory.Remove(slot, changeWeight);
+        if (_bagInventory.IsFull() == false)
+        {
+            _bagInventory.Add(newSlot, itemToAdd, changeWeight: changeWeight);
+            newSlot.Stack = _bagInventory.Stacks[newSlot];
+        }
+        else
+        {
+            Debug.Log("Inventory is full");
+        }
+    }
+
+    public void RemoveItemFromBag(InventorySlot slot, int stack = 1, bool changeWeight = true)
+    {
+        _bagInventory.Remove(slot, stack, changeWeight);
     }
 
     public void AddItemToDoll(InventorySlot slot, ItemSO itemToAdd)
@@ -201,7 +217,7 @@ public class InventoryManager : MonoBehaviour
         {
             foreach (var newSlot in newSlots)
             {
-                if(_bagInventory.HasFreeStack(newSlot, newItem))
+                if (_bagInventory.HasFreeStack(newSlot, newItem))
                 {
                     hasStack = true;
                     break;
@@ -215,7 +231,7 @@ public class InventoryManager : MonoBehaviour
 
             createdItem.ChangeParent(slot);
         }
-        AddItemToBag(slot, newItem, changeWeight);
+        AddCreatedItemToBag(slot, newItem, changeWeight);
 
         return createdItem;
     }

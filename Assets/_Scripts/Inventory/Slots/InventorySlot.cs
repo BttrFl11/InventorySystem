@@ -14,13 +14,12 @@ public class InventorySlot : MonoBehaviour, IDropHandler
         set
         {
             _stack = value;
-            if (_stack > MaxStack)
-                _stack = MaxStack;
-            else if (_stack == 0 || _stack == 1)
-                _stackCountText.enabled = false;
 
             _stackCountText.enabled = true;
             _stackCountText.text = Stack.ToString();
+
+            if (_stack == 0 || _stack == 1)
+                _stackCountText.enabled = false;
         }
     }
 
@@ -68,7 +67,7 @@ public class InventorySlot : MonoBehaviour, IDropHandler
 
     public virtual void Clear()
     {
-        if(_item != null)
+        if (_item != null)
         {
             Destroy(_item.gameObject);
             _item = null;

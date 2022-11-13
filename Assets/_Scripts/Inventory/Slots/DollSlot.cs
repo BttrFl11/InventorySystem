@@ -46,7 +46,7 @@ public class DollSlot : InventorySlot
 
         _inventoryManager.RemoveItemFromDoll(this);
         _inventoryManager.RemoveItemFromBag(newItem.Slot);
-        _inventoryManager.AddItemToBag(newItem.Slot, _item.Item);
+        _inventoryManager.AddItemToBag(newItem.Slot, newItemSlot, _item.Item);
         _inventoryManager.AddItemToDoll(this, newItem.Item);
 
         oldItem.ChangeParent(newItemSlot);

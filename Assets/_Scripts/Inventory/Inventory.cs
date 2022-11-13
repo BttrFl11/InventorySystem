@@ -75,17 +75,20 @@ public class Inventory
         }
     }
 
-    public bool Add(InventorySlot slot, ItemSO itemToAdd, bool changeWeight = true)
+    public bool Add(InventorySlot slot, ItemSO itemToAdd, int addStack = 1, bool changeWeight = true)
     {
         if (itemToAdd == null) return false;
 
         if (HasFreeWeight(itemToAdd) && HasFreeStack(slot, itemToAdd))
         {
             if (changeWeight == true)
-                Weight += itemToAdd.Weight;
+                Weight += itemToAdd.Weight * addStack;
+
+            if (Weight > MaxWeight)
+                Debug.LogError("Weight more then MaxWeight!");
 
             ChangeSlotValue(slot, itemToAdd);
-            ChangeStackValue(slot, Stacks[slot] + 1);
+            AddStack(slot, addStack);
 
             OnItemAdded?.Invoke(itemToAdd);
 
@@ -93,6 +96,34 @@ public class Inventory
         }
 
         return false;
+    }
+
+    public void Remove(InventorySlot slot, int removeStack = 1, bool changeWeight = true)
+    {
+        var itemToRemove = slot.Peek();
+
+        if (changeWeight == true)
+        {
+            Weight -= itemToRemove.Weight * removeStack;
+            if (Weight < 0)
+                Debug.LogError("Negative weight!");
+        }
+
+        RemoveStack(slot, removeStack);
+        if (HasFreeStack(slot, itemToRemove.Item) == false)
+            ChangeSlotValue(slot, null);
+    }
+
+    private void RemoveStack(InventorySlot slot, int stack)
+    {
+        Stacks[slot] -= stack;
+        slot.Stack = Stacks[slot];
+    }
+
+    private void AddStack(InventorySlot slot, int stack)
+    {
+        Stacks[slot] += stack;
+        slot.Stack = Stacks[slot];
     }
 
     public bool HasFreeStack(InventorySlot slot, ItemSO item)
@@ -107,16 +138,6 @@ public class Inventory
         if (item.Weight <= FreeWeight)
             return true;
         return false;
-    }
-
-    public void Remove(InventorySlot slot, bool changeWeight = true)
-    {
-        var itemToRemove = slot.Peek();
-
-        if (changeWeight == true)
-            Weight -= itemToRemove.Weight;
-
-        ChangeSlotValue(slot, null);
     }
 
     public void Clear()
@@ -172,7 +193,7 @@ public class Inventory
         int i = 0;
         foreach (var item2 in Items.Values)
         {
-            if(item2 == item)
+            if (item2 == item)
             {
                 slots.Add(allSlots[i]);
 
