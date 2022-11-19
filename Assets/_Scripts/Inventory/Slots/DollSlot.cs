@@ -1,4 +1,3 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -13,29 +12,39 @@ public class DollSlot : InventorySlot
         if (eventData.pointerDrag.TryGetComponent(out EquipableItem newItem)
             && newItem.SlotType == _slotType)
         {
-            if (newItem != _item)
+            if (newItem == _item)
+                return;
+
+            if (_item != null)
             {
-                if (_item != null)
-                {
-                    SwapItems(newItem);
-                }
-                else if (newItem.Slot.TryGetComponent(out DollSlot _))
-                {
-                    _inventoryManager.RemoveItemFromDoll(newItem.Slot);
-                    _inventoryManager.AddItemToDoll(this, newItem.Item);
-                    newItem.ChangeParent(this);
-                }
-                else
-                {
-                    _inventoryManager.RemoveItemFromBag(newItem.Slot);
-                    _inventoryManager.AddItemToDoll(this, newItem.Item);
-                    newItem.ChangeParent(this);
-                }
+                SwapItems(newItem);
+            }
+            else if (newItem.Slot.TryGetComponent(out DollSlot _))
+            {
+                FromDollToDoll(newItem);
+            }
+            else
+            {
+                FromBagToDoll(newItem);
             }
 
             _item = newItem;
             newItem.Equip();
         }
+    }
+
+    private void FromBagToDoll(InventoryItem newItem)
+    {
+        _inventoryManager.RemoveItemFromBag(newItem.Slot);
+        _inventoryManager.AddItemToDoll(this, newItem.Item);
+        newItem.ChangeParent(this);
+    }
+
+    private void FromDollToDoll(InventoryItem newItem)
+    {
+        _inventoryManager.RemoveItemFromDoll(newItem.Slot);
+        _inventoryManager.AddItemToDoll(this, newItem.Item);
+        newItem.ChangeParent(this);
     }
 
     protected override void SwapItems(InventoryItem newItem)

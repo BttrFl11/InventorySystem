@@ -148,9 +148,12 @@ public class InventoryManager : MonoBehaviour
     {
         if (_bagInventory.IsFull() == false)
         {
-            var newStack = _bagInventory.Stacks[oldSlot];
+            bool dollSlot = oldSlot.TryGetComponent(out DollSlot _);
+            var inventory = dollSlot ? _dollInventory : _bagInventory;
+
+            var newStack = inventory.Stacks[oldSlot];
             _bagInventory.Add(newSlot, itemToAdd, newStack, changeWeight);
-            newSlot.Stack = newStack;
+            newSlot.Stack = _bagInventory.Stacks[newSlot];
         }
         else
         {

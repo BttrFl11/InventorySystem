@@ -162,6 +162,8 @@ public class Inventory
 
         Items[slot1] = item2;
         Items[slot2] = item1;
+        Stacks[slot1] = slot2.Stack;
+        Stacks[slot2] = slot1.Stack;
     }
 
     public bool IsFull()
