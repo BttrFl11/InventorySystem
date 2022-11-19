@@ -15,4 +15,4 @@ MonoBehaviour:
   Icon: {fileID: 407393458, guid: 62e34306754e45445afefce1f3b2c0d1, type: 3}
   SlotType: 4
   Weight: 0.5
-  MaxStack: 1
+  MaxStack: 2

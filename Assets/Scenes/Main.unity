@@ -3137,6 +3137,22 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: InventoryUI, Assembly-CSharp
       objectReference: {fileID: 0}
+    - target: {fileID: 13718278710634750, guid: 5447458b32eeb9141b890fe7b68fc998, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 1668391948, guid: adc2a0787cda0d34c9c3f68982db43fb, type: 3}
+    - target: {fileID: 208064606869890884, guid: 5447458b32eeb9141b890fe7b68fc998, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 15916971, guid: adc2a0787cda0d34c9c3f68982db43fb, type: 3}
+    - target: {fileID: 478587715223415468, guid: 5447458b32eeb9141b890fe7b68fc998, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -634553209, guid: adc2a0787cda0d34c9c3f68982db43fb, type: 3}
+    - target: {fileID: 542503934971973826, guid: 5447458b32eeb9141b890fe7b68fc998, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 9220493, guid: adc2a0787cda0d34c9c3f68982db43fb, type: 3}
     - target: {fileID: 644408664952702008, guid: 5447458b32eeb9141b890fe7b68fc998, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3249,6 +3265,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: InventoryManager
       objectReference: {fileID: 0}
+    - target: {fileID: 1937227374443042020, guid: 5447458b32eeb9141b890fe7b68fc998, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 1345085633, guid: adc2a0787cda0d34c9c3f68982db43fb, type: 3}
     - target: {fileID: 2047244353825146043, guid: 5447458b32eeb9141b890fe7b68fc998, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -3273,6 +3293,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2181973644839290085, guid: 5447458b32eeb9141b890fe7b68fc998, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 9220493, guid: adc2a0787cda0d34c9c3f68982db43fb, type: 3}
     - target: {fileID: 2438939141204939057, guid: 5447458b32eeb9141b890fe7b68fc998, type: 3}
       propertyPath: _slotType
       value: 1
@@ -3445,6 +3469,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5531529315870910167, guid: 5447458b32eeb9141b890fe7b68fc998, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 9220493, guid: adc2a0787cda0d34c9c3f68982db43fb, type: 3}
     - target: {fileID: 5586708809174280991, guid: 5447458b32eeb9141b890fe7b68fc998, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
